@@ -1,0 +1,1 @@
+include ':app', ':jackson-core-2.9.8', ':jackson-annotations-2.9.8', ':jackson-databind-2.9.8', ':okhttp-3.14.1', ':okio-2.2.2', ':kotlin-stdlib-1.3.31', ':kotlin-stdlib-common-1.3.31'

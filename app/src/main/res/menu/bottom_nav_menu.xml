@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_free_leads"
+        android:icon="@drawable/ic_free_leads_24dp"
+        android:title="@string/free_leads" />
+
+    <item
+        android:id="@+id/navigation_leads"
+        android:icon="@drawable/ic_leads_24dp"
+        android:title="@string/leads" />
+
+    <item
+        android:id="@+id/navigation_sirello"
+        android:icon="@drawable/ic_sirello_24dp"
+        android:title="@string/sirello" />
+
+</menu>
