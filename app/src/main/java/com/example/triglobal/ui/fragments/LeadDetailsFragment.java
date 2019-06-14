@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.triglobal.R;
 import com.example.triglobal.models.Lead;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -125,6 +126,7 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
         findViews();
         if (getArguments().containsKey(LEADSTRING) && !getArguments().getString(LEADSTRING).equals("")) {
             ObjectMapper om = new ObjectMapper();
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             try {
                 mLead = om.readValue(getArguments().getString(LEADSTRING), Lead.class);
             } catch (Exception e) {
@@ -138,6 +140,7 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    //TODO: rewrite with different onclicklisteners
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

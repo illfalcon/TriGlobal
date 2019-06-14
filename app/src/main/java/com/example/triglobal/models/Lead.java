@@ -63,7 +63,9 @@ public class Lead {
     }
 
     public String getMovingDate() {
-        return format.format(movingDate);
+        if (movingDate != null)
+            return format.format(movingDate);
+        return "";
     }
 
     public double getVolumeMeters() {

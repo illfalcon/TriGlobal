@@ -2,7 +2,6 @@ package com.example.triglobal.ui.fragments;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.triglobal.R;
@@ -29,7 +27,6 @@ import com.example.triglobal.ui.recycler.LeadsAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -45,8 +42,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     private RecyclerView mRecyclerView;
     private LeadsAdapter mAdapter;
     private List<Lead> mLeads;
-    private OnFragmentInteractionListener mListener;
-    private ProgressBar mpBar;
+    private OnLeadFragmentInteractionListener mListener;
     private TextView mLeadsError;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean loaded;
@@ -70,7 +66,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         getLoaderManager().restartLoader(0, null, this);
     }
 
-    public interface OnFragmentInteractionListener {
+    public interface OnLeadFragmentInteractionListener {
         void onLeadChoice(Lead lead);
     }
 
@@ -78,11 +74,11 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(TAG, "onAttach: ");
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnLeadFragmentInteractionListener) {
+            mListener = (OnLeadFragmentInteractionListener) context;
         } else {
             throw new ClassCastException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnLeadFragmentInteractionListener");
         }
     }
 
@@ -144,7 +140,6 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         Log.d(TAG, "onLoadFinished: leads == null: " + (leads == null));
         Log.d(TAG, "onLoadFinished: loaded: " + loaded);
         if (leads != null) {
-            mRecyclerView.setVisibility(View.VISIBLE);
             Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
             mLeads = leads;
             loaded = true;

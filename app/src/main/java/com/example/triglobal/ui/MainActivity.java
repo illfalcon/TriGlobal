@@ -11,12 +11,15 @@ import android.widget.Toast;
 
 import com.example.triglobal.R;
 import com.example.triglobal.broadcast.NetworkChangeReceiver;
+import com.example.triglobal.models.FreeLead;
 import com.example.triglobal.models.Lead;
+import com.example.triglobal.ui.fragments.FreeLeadsFragment;
 import com.example.triglobal.ui.fragments.LeadDetailsFragment;
 import com.example.triglobal.ui.fragments.LeadsFragment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MainActivity extends AppCompatActivity implements LeadsFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements
+        LeadsFragment.OnLeadFragmentInteractionListener, FreeLeadsFragment.OnFreeLeadFragmentInteractionListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String FRAGMENT_KEY = "curFragment";
@@ -38,8 +41,7 @@ public class MainActivity extends AppCompatActivity implements LeadsFragment.OnF
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.navigation_free_leads:
-                        Toast.makeText(MainActivity.this, "Free Leads", Toast.LENGTH_SHORT)
-                                .show();
+                        startFreeLeadsFragment();
                         Log.d(LOG_TAG, "Free leads clicked");
                         return true;
                     case R.id.navigation_leads:
@@ -108,6 +110,18 @@ public class MainActivity extends AppCompatActivity implements LeadsFragment.OnF
         }
     }
 
+    public void startFreeLeadsFragment() {
+        if (!mCurFragmentName.equals(FreeLeadsFragment.TAG)) {
+            FreeLeadsFragment freeLeadsFragment = FreeLeadsFragment.newInstance();
+            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, freeLeadsFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            mCurFragmentName = FreeLeadsFragment.TAG;
+            mCurFragment = freeLeadsFragment;
+        }
+    }
+
     @Override
     public void onLeadChoice(Lead lead) {
         mDisplayedLead = lead;
@@ -128,5 +142,11 @@ public class MainActivity extends AppCompatActivity implements LeadsFragment.OnF
         }
         outState.putString(FRAGMENT_KEY, mCurFragmentName);
         outState.putString(LEAD_KEY, leadSerialized);
+    }
+
+    @Override
+    public void onFreeLeadChoice(FreeLead freeLead) {
+        mDisplayedLead = freeLead;
+        startLeadDetailsFragment(freeLead);
     }
 }

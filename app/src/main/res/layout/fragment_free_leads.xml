@@ -1,14 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragments.FreeLeadsFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+<android.support.v4.widget.SwipeRefreshLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/freeleads_refresh_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        tools:context=".ui.fragments.FreeLeadsFragment">
 
-</FrameLayout>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="6dp"
+            android:background="@color/colorAccent"
+            android:orientation="horizontal">
+            <TextView
+                android:textColor="#FFFFFF"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="@string/name_label"/>
+            <TextView
+                android:layout_width="0dp"
+                android:textColor="#FFFFFF"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="@string/moving_date_label"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textColor="#E91E63"
+            android:textSize="36sp"
+            android:visibility="gone"
+            android:id="@+id/freeleads_error_message"
+            android:text="@string/leads_error"/>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/freeleads_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
