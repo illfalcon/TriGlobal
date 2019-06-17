@@ -1,4 +1,4 @@
-package com.example.triglobal.ui.recycler.freeleads;
+package com.example.triglobal.ui.recycler;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,15 +22,17 @@ public class FreeLeadsAdapter extends
 
     public static final String TAG = FreeLeadsAdapter.class.getSimpleName();
 
-    private OnFreeLeadClickListener mListener;
+    private OnFreeLeadClickListener onFreeLeadClickListener;
+    private OnFreeLeadPurchase onFreeLeadPurchase;
     private List<FreeLead> mFreeLeadList;
     private LayoutInflater mLayoutInflater;
 
     public FreeLeadsAdapter(Context context,
-                        List<FreeLead> freeLeads, OnFreeLeadClickListener listener) {
+                        List<FreeLead> freeLeads, OnFreeLeadClickListener onFreeLeadClickListener, OnFreeLeadPurchase purchaseListener) {
         mLayoutInflater = LayoutInflater.from(context);
         mFreeLeadList = freeLeads;
-        mListener = listener;
+        this.onFreeLeadClickListener = onFreeLeadClickListener;
+        this.onFreeLeadPurchase = purchaseListener;
     }
 
     @NonNull
@@ -70,6 +73,10 @@ public class FreeLeadsAdapter extends
         void onFreeLeadClicked(FreeLead freeLead);
     }
 
+    public interface OnFreeLeadPurchase {
+        void onFreeLeadBuyClicked(FreeLead freeLead);
+    }
+
     class FreeLeadViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public LinearLayout mVisiblePart;
@@ -82,13 +89,18 @@ public class FreeLeadsAdapter extends
         public TextView mTimeLeft;
         public ImageButton mDownArrow;
         final FreeLeadsAdapter mAdapter;
-        public View.OnClickListener onClickTransfomer;
+        public View.OnClickListener onClickTransformer;
+        public View.OnClickListener onBuyListener;
+        public Button mBuyFreeLead;
 
         public FreeLeadViewHolder(@NonNull View itemView, FreeLeadsAdapter adapter) {
             super(itemView);
-            onClickTransfomer = v -> {
+            onClickTransformer = v -> {
                 int pos = getLayoutPosition();
                 toggleVisibility(pos);
+            };
+            onBuyListener = v -> {
+                onFreeLeadPurchase.onFreeLeadBuyClicked(mFreeLeadList.get(getLayoutPosition()));
             };
             mFreeLeadFrom = itemView.findViewById(R.id.freelead_from);
             mFreeLeadTo = itemView.findViewById(R.id.freelead_to);
@@ -97,9 +109,11 @@ public class FreeLeadsAdapter extends
             mMovingDate = itemView.findViewById(R.id.freelead_moving_date);
             mCost = itemView.findViewById(R.id.freelead_cost);
             mTimeLeft = itemView.findViewById(R.id.freelead_time_left);
-            mDownArrow.setOnClickListener(onClickTransfomer);
+            mDownArrow.setOnClickListener(onClickTransformer);
             mVisiblePart = itemView.findViewById(R.id.freelead_visible_layout);
             mInvisiblePart = itemView.findViewById(R.id.freelead_hidden_layout);
+            mBuyFreeLead = itemView.findViewById(R.id.freelead_buy);
+            mBuyFreeLead.setOnClickListener(onBuyListener);
             itemView.setOnClickListener(this);
             this.mAdapter = adapter;
         }
@@ -120,7 +134,7 @@ public class FreeLeadsAdapter extends
             int i = getLayoutPosition();
             Log.d(TAG, "onClick: i = " + i);
             FreeLead freeLead = mFreeLeadList.get(i);
-            mListener.onFreeLeadClicked(freeLead);
+            onFreeLeadClickListener.onFreeLeadClicked(freeLead);
         }
     }
 }

@@ -18,12 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.triglobal.R;
 import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.FreeLead;
 import com.example.triglobal.ui.FreeLeadsLoader;
-import com.example.triglobal.ui.recycler.freeleads.FreeLeadsAdapter;
+import com.example.triglobal.ui.recycler.FreeLeadsAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     private FreeLeadsAdapter mAdapter;
     private List<FreeLead> mFreeLeads;
     private FreeLeadsAdapter.OnFreeLeadClickListener onFreeLeadClickListener;
+    private FreeLeadsAdapter.OnFreeLeadPurchase onFreeLeadPurchase;
     private TextView mFreeLeadsError;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean loaded;
@@ -76,7 +78,11 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         super.onCreate(savedInstanceState);
         mFreeLeads = new ArrayList<>();
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
-        mAdapter = new FreeLeadsAdapter(this.getContext(), mFreeLeads, onFreeLeadClickListener);
+        onFreeLeadPurchase = (FreeLead freeLead) -> {
+            Toast.makeText(this.getContext(), "Buy clicked", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onCreate: buy button clicked");
+        };
+        mAdapter = new FreeLeadsAdapter(this.getContext(), mFreeLeads, onFreeLeadClickListener, onFreeLeadPurchase);
     }
 
     @Override
