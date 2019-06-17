@@ -53,17 +53,22 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 public void onLoadFinished(@NonNull Loader<List<FreeLead>> loader, List<FreeLead> freeLeads) {
                     mFreeLeadsError.setVisibility(View.GONE);
                     if (freeLeads != null) {
-                        Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
-                                o1.getTimeLeft().compareTo(o2.getTimeLeft()));
-                        mFreeLeads = freeLeads;
-                        Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
-                        loaded = true;
+                        if (freeLeads != mFreeLeads) {
+                            Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
+                                    o1.getTimeLeft().compareTo(o2.getTimeLeft()));
+                            mFreeLeads = freeLeads;
+                            Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
+                            loaded = true;
+                            mAdapter.updateData(mFreeLeads);
+                        } else {
+                            loaded = true;
+                        }
                     } else {
                         if (!loaded) {
                             mFreeLeadsError.setVisibility(View.VISIBLE);
+                            mAdapter.updateData(mFreeLeads);
                         }
                     }
-                    mAdapter.updateData(mFreeLeads);
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
 
@@ -116,8 +121,6 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mFreeLeads = new ArrayList<>();
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
         onFreeLeadPurchase = (FreeLead freeLead) -> {
-//            Bundle bundle = new Bundle();
-//            bundle.putInt(FREE_LEAD_ID_TO_BUY, freeLead.getId());
             new BuyResponseAsyncTask(s -> {
                 Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
                 if (s.equals("success")) {
@@ -156,7 +159,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         getActivity().registerReceiver(networkChangeReceiver, filter);
         if (!loaded) {
-            getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+            getLoaderManager().initLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
         }
     }
 
