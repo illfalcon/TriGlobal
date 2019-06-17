@@ -2,6 +2,8 @@ package com.example.triglobal.ui.fragments;
 
 
 import android.content.Context;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.triglobal.R;
+import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.FreeLead;
 import com.example.triglobal.ui.FreeLeadsLoader;
 import com.example.triglobal.ui.recycler.freeleads.FreeLeadsAdapter;
@@ -42,6 +45,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean loaded;
     private OnFreeLeadFragmentInteractionListener mListener;
+    private NetworkChangeReceiver networkChangeReceiver;
 
     public FreeLeadsFragment() {
         // Required empty public constructor
@@ -91,14 +95,32 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         super.onResume();
+        networkChangeReceiver = new NetworkChangeReceiver();
+        networkChangeReceiver.onConnectionAction = () ->
+        {
+            mFreeLeadsError.setVisibility(View.GONE);
+            if (!loaded) {
+                getLoaderManager().restartLoader(0, null, this);
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        getActivity().registerReceiver(networkChangeReceiver, filter);
         if (!loaded) {
             getLoaderManager().restartLoader(0, null, this);
         }
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(networkChangeReceiver);
+    }
+
+    @Override
     public void onRefresh() {
         loaded = false;
+        mFreeLeads = new ArrayList<>();
+        mAdapter.updateData(mFreeLeads);
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -115,7 +137,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mFreeLeadsError.setVisibility(View.GONE);
         if (freeLeads != null) {
             Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
-                    o1.getMovingDate().compareTo(o2.getMovingDate()));
+                    o1.getTimeLeft().compareTo(o2.getTimeLeft()));
             mFreeLeads = freeLeads;
             Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
             loaded = true;

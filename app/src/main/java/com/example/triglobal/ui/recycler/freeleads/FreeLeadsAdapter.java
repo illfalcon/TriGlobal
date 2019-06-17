@@ -42,11 +42,16 @@ public class FreeLeadsAdapter extends
     @Override
     public void onBindViewHolder(@NonNull FreeLeadViewHolder freeLeadViewHolder, int i) {
         FreeLead curLead = mFreeLeadList.get(i);
-        freeLeadViewHolder.mFreeLeadName.setText(curLead.getFullName());
-        freeLeadViewHolder.mFreeLeadDate.setText(curLead.getMovingDate());
-        freeLeadViewHolder.mAmountMatched.setText(curLead.getAmountMatched());
-        freeLeadViewHolder.mCost.setText(String.valueOf(curLead.getCost()));
+        freeLeadViewHolder.mMovingDate.setText(curLead.getMovingDate());
+        freeLeadViewHolder.mMovingSize.setText(
+                curLead.getVolumeMeters() != 0 ? curLead.getVolumeMeters() + " m3" :
+                "Unknown"
+        );
+        freeLeadViewHolder.mFreeLeadFrom.setText(curLead.getCityFrom());
+        freeLeadViewHolder.mFreeLeadTo.setText(curLead.getCityTo());
         freeLeadViewHolder.mTimeLeft.setText(curLead.getTimeLeft());
+        freeLeadViewHolder.mCost.setText(String.valueOf(curLead.getCost()));
+        freeLeadViewHolder.mInvisiblePart.setVisibility(curLead.isVisible() ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -69,9 +74,10 @@ public class FreeLeadsAdapter extends
 
         public LinearLayout mVisiblePart;
         public LinearLayout mInvisiblePart;
-        public TextView mFreeLeadName;
-        public TextView mFreeLeadDate;
-        public TextView mAmountMatched;
+        public TextView mFreeLeadFrom;
+        public TextView mFreeLeadTo;
+        public TextView mMovingSize;
+        public TextView mMovingDate;
         public TextView mCost;
         public TextView mTimeLeft;
         public ImageButton mDownArrow;
@@ -81,12 +87,14 @@ public class FreeLeadsAdapter extends
         public FreeLeadViewHolder(@NonNull View itemView, FreeLeadsAdapter adapter) {
             super(itemView);
             onClickTransfomer = v -> {
-                toggleVisibility();
+                int pos = getLayoutPosition();
+                toggleVisibility(pos);
             };
-            mFreeLeadName = itemView.findViewById(R.id.freelead_name);
-            mFreeLeadDate = itemView.findViewById(R.id.freelead_date);
+            mFreeLeadFrom = itemView.findViewById(R.id.freelead_from);
+            mFreeLeadTo = itemView.findViewById(R.id.freelead_to);
             mDownArrow = itemView.findViewById(R.id.freelead_downarrow);
-            mAmountMatched = itemView.findViewById(R.id.freelead_matched);
+            mMovingSize = itemView.findViewById(R.id.freelead_moving_size);
+            mMovingDate = itemView.findViewById(R.id.freelead_moving_date);
             mCost = itemView.findViewById(R.id.freelead_cost);
             mTimeLeft = itemView.findViewById(R.id.freelead_time_left);
             mDownArrow.setOnClickListener(onClickTransfomer);
@@ -96,11 +104,15 @@ public class FreeLeadsAdapter extends
             this.mAdapter = adapter;
         }
 
-        public void toggleVisibility() {
-            if (mInvisiblePart.getVisibility() == View.GONE)
-                mInvisiblePart.setVisibility(View.VISIBLE);
-            else
+        public void toggleVisibility(int viewPosition) {
+            FreeLead freeLead = mFreeLeadList.get(viewPosition);
+            if (freeLead.isVisible()) {
+                freeLead.setVisible(false);
                 mInvisiblePart.setVisibility(View.GONE);
+            } else {
+                freeLead.setVisible(true);
+                mInvisiblePart.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override

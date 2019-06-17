@@ -23,14 +23,21 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
-                android:text="@string/name_label"/>
+                android:text="@string/from"/>
             <TextView
                 android:layout_width="0dp"
                 android:textColor="#FFFFFF"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
-                android:text="@string/moving_date_label"/>
+                android:text="@string/to"/>
+            <TextView
+                android:layout_width="0dp"
+                android:textColor="#FFFFFF"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="@string/time_left"/>
         </LinearLayout>
 
         <TextView

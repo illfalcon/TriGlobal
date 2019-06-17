@@ -18,4 +18,9 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:id="@+id/lead_date"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:visibility="visible"
+        android:background="#E91E63"/>
 </LinearLayout>

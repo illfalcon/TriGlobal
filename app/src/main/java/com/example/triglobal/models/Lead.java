@@ -54,6 +54,9 @@ public class Lead {
     @JsonProperty("re_remarks")
     private String remarks;
 
+    //field necessary for proper ui functioning
+    private boolean visible;
+
     public Lead() {
         format = new SimpleDateFormat("yyyy-MM-dd");
     }
@@ -142,6 +145,14 @@ public class Lead {
 
     public String getRemarks() {
         return remarks;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
 //    public String getContents() {
