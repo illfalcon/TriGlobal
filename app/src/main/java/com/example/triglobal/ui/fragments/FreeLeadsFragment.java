@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.triglobal.R;
 import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.FreeLead;
+import com.example.triglobal.ui.BuyResponseAsyncTask;
 import com.example.triglobal.ui.FreeLeadsLoader;
 import com.example.triglobal.ui.recycler.FreeLeadsAdapter;
 
@@ -33,10 +34,45 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        LoaderManager.LoaderCallbacks<List<FreeLead>> {
+public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String TAG = FreeLeadsFragment.class.getSimpleName();
+    private static final int FREE_LEADS_LOADER_ID = 0;
+
+    private LoaderManager.LoaderCallbacks<List<FreeLead>> freeLeadsLoader =
+            new LoaderManager.LoaderCallbacks<List<FreeLead>>() {
+                @NonNull
+                @Override
+                public Loader<List<FreeLead>> onCreateLoader(int i, @Nullable Bundle bundle) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    mFreeLeadsError.setVisibility(View.GONE);
+                    return new FreeLeadsLoader(getContext());
+                }
+
+                @Override
+                public void onLoadFinished(@NonNull Loader<List<FreeLead>> loader, List<FreeLead> freeLeads) {
+                    mFreeLeadsError.setVisibility(View.GONE);
+                    if (freeLeads != null) {
+                        Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
+                                o1.getTimeLeft().compareTo(o2.getTimeLeft()));
+                        mFreeLeads = freeLeads;
+                        Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
+                        loaded = true;
+                    } else {
+                        if (!loaded) {
+                            mFreeLeadsError.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    mAdapter.updateData(mFreeLeads);
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+
+                @Override
+                public void onLoaderReset(@NonNull Loader<List<FreeLead>> loader) {
+//                    mSwipeRefreshLayout.setRefreshing(true);
+//                    mFreeLeadsError.setVisibility(View.GONE);
+                }
+            };
 
     private RecyclerView mRecyclerView;
     private FreeLeadsAdapter mAdapter;
@@ -54,7 +90,8 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     public static FreeLeadsFragment newInstance() {
-        return new FreeLeadsFragment();
+        FreeLeadsFragment freeLeadsFragment = new FreeLeadsFragment();
+        return freeLeadsFragment;
     }
 
     public interface OnFreeLeadFragmentInteractionListener {
@@ -79,8 +116,15 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mFreeLeads = new ArrayList<>();
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
         onFreeLeadPurchase = (FreeLead freeLead) -> {
-            Toast.makeText(this.getContext(), "Buy clicked", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "onCreate: buy button clicked");
+//            Bundle bundle = new Bundle();
+//            bundle.putInt(FREE_LEAD_ID_TO_BUY, freeLead.getId());
+            new BuyResponseAsyncTask(s -> {
+                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+                if (s.equals("success")) {
+                    loaded = false;
+                    getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+                }
+            }).execute(freeLead.getId());
         };
         mAdapter = new FreeLeadsAdapter(this.getContext(), mFreeLeads, onFreeLeadClickListener, onFreeLeadPurchase);
     }
@@ -106,13 +150,13 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         {
             mFreeLeadsError.setVisibility(View.GONE);
             if (!loaded) {
-                getLoaderManager().restartLoader(0, null, this);
+                getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
             }
         };
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         getActivity().registerReceiver(networkChangeReceiver, filter);
         if (!loaded) {
-            getLoaderManager().restartLoader(0, null, this);
+            getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
         }
     }
 
@@ -127,39 +171,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         loaded = false;
         mFreeLeads = new ArrayList<>();
         mAdapter.updateData(mFreeLeads);
-        getLoaderManager().restartLoader(0, null, this);
-    }
-
-    @NonNull
-    @Override
-    public Loader<List<FreeLead>> onCreateLoader(int i, @Nullable Bundle bundle) {
-        mSwipeRefreshLayout.setRefreshing(true);
-        mFreeLeadsError.setVisibility(View.GONE);
-        return new FreeLeadsLoader(this.getContext());
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<List<FreeLead>> loader, List<FreeLead> freeLeads) {
-        mFreeLeadsError.setVisibility(View.GONE);
-        if (freeLeads != null) {
-            Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
-                    o1.getTimeLeft().compareTo(o2.getTimeLeft()));
-            mFreeLeads = freeLeads;
-            Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
-            loaded = true;
-        } else {
-            if (!loaded) {
-                mFreeLeadsError.setVisibility(View.VISIBLE);
-            }
-        }
-        mAdapter.updateData(mFreeLeads);
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<List<FreeLead>> loader) {
-        mSwipeRefreshLayout.setRefreshing(true);
-        mFreeLeadsError.setVisibility(View.GONE);
+        getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
     }
 
 }

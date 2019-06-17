@@ -3,13 +3,8 @@ package com.example.triglobal.network;
 import android.util.Log;
 
 import com.example.triglobal.exceptions.FetchingException;
-import com.example.triglobal.exceptions.SerializationException;
-import com.example.triglobal.models.FreeLead;
-import com.example.triglobal.models.JSONFreeLeadsDeserializer;
-import com.example.triglobal.models.ListDeserializer;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -18,26 +13,21 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.Buffer;
 
-public class FreeLeadsFetcher implements ListFetcher {
-    private static final String TAG = FreeLeadsFetcher.class.getSimpleName();
+public class BuyLeadResponseFetcher implements ResponseFetcher<String, Integer> {
+    private static String TAG = BuyLeadResponseFetcher.class.getSimpleName();
 
-    private ListDeserializer listDeserializer;
+    public BuyLeadResponseFetcher() {
 
-    public FreeLeadsFetcher() { listDeserializer = new JSONFreeLeadsDeserializer(); }
-
-    @Override
-    public List<FreeLead> fetchList() throws FetchingException, SerializationException {
-        return deserializeData(loadData());
     }
 
-    private String loadData() throws FetchingException {
+    private String loadResponse(int reId) throws FetchingException {
         Log.d(TAG, "loadData: started loading data");
         try {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-            RequestBody body = RequestBody.create(mediaType, "------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"token\"\n\nCdcZ5TqsTS\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"id\"\n\n1\n------WebKitFormBoundary7MA4YWxkTrZu0gW--");
+            RequestBody body = RequestBody.create(mediaType, "------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"token\"\n\nCdcZ5TqsTS\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"id\"\n\n1\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"re_id\"\n\n" + reId + "\n------WebKitFormBoundary7MA4YWxkTrZu0gW--");
             Request request = new Request.Builder()
-                    .url("https://public.triglobal-test-back.nl/api/freeleads.php")
+                    .url("https://public.triglobal-test-back.nl/api/buy_lead.php")
                     .post(body)
                     .addHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
                     .addHeader("cache-control", "no-cache")
@@ -55,7 +45,8 @@ public class FreeLeadsFetcher implements ListFetcher {
         }
     }
 
-    private List<FreeLead> deserializeData(String data) throws SerializationException {
-        return listDeserializer.Deserialize(data);
+    @Override
+    public String fetchResponse(Integer arg) throws FetchingException {
+        return loadResponse(arg);
     }
 }

@@ -18,7 +18,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.Buffer;
 
-public class LeadsFetcher implements DataFetcher {
+public class LeadsFetcher implements ListFetcher {
     private static final String TAG = LeadsFetcher.class.getSimpleName();
     private ListDeserializer listDeserializer;
 
@@ -26,7 +26,7 @@ public class LeadsFetcher implements DataFetcher {
         listDeserializer = new JSONLeadsDeserializer();
     }
 
-    public List<Lead> fetchData() throws FetchingException, SerializationException {
+    public List<Lead> fetchList() throws FetchingException, SerializationException {
         String data = loadData();
         List<Lead> leads = deserializeData(data);
         return leads;
