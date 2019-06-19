@@ -124,8 +124,11 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         networkChangeReceiver = new NetworkChangeReceiver();
         networkChangeReceiver.onConnectionAction = () ->
         {
-            mFreeLeadsError.setVisibility(View.GONE);
-            getLoaderManager().initLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+            if (!loaded) {
+                mFreeLeadsError.setVisibility(View.GONE);
+                Log.d(TAG, "onCreate: startLoader");
+                getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+            }
         };
     }
 

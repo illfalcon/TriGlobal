@@ -36,7 +36,6 @@ import java.util.List;
 public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Lead>>,
         SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = LeadsFragment.class.getSimpleName();
-    public static final String LOADED_KEY = "loaded";
     private static NetworkChangeReceiver networkChangeReceiver;
 
     private RecyclerView mRecyclerView;
@@ -59,6 +58,9 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onRefresh() {
+        loaded = false;
+        mLeads = new ArrayList<>();
+        mAdapter.updateData(mLeads);
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -118,15 +120,14 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(@NonNull Loader<List<Lead>> loader, List<Lead> leads) {
         mLeadsError.setVisibility(View.GONE);
-        if (mLeads != leads) {
-            if (leads != null) {
-                Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
-                mLeads = leads;
-                loaded = true;
-                mAdapter.updateData(mLeads);
-            } else {
+        if (leads != null && mLeads != leads) {
+            Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
+            mLeads = leads;
+            loaded = true;
+            mAdapter.updateData(mLeads);
+        } else {
+            if (!loaded)
                 mLeadsError.setVisibility(View.VISIBLE);
-            }
         }
         mSwipeRefreshLayout.setRefreshing(false);
     }
@@ -138,14 +139,14 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
         mLeads = new ArrayList<>();
         onItemClickListener = (Lead lead) -> mListener.onLeadChoice(lead);
         mAdapter = new LeadsAdapter(this.getContext(), mLeads, onItemClickListener);
         networkChangeReceiver = new NetworkChangeReceiver();
         networkChangeReceiver.onConnectionAction = () -> {
             mLeadsError.setVisibility(View.GONE);
-            getLoaderManager().initLoader(0, null, this);
+            if (!loaded)
+                getLoaderManager().restartLoader(0, null, this);
         };
     }
 }

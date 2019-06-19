@@ -20,22 +20,17 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-
-        if(checkInternet(context))
-        {
-            Log.d(TAG, "Connected");
-            onConnectionAction.onConnection();
-        }
-
+        Log.d(TAG, "Connected");
+        onConnectionAction.onConnection();
     }
 
-    boolean checkInternet(Context context) {
-        ServiceManager serviceManager = new ServiceManager(context);
-        if (serviceManager.isNetworkAvailable()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    boolean checkInternet(Context context) {
+//        ServiceManager serviceManager = new ServiceManager(context);
+//        if (serviceManager.isNetworkAvailable()) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
 
 }

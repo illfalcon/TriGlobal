@@ -47,7 +47,6 @@ public class FreeLeadsLoader extends AsyncTaskLoader<List<FreeLead>> {
     @Override
     public void deliverResult(@Nullable List<FreeLead> data) {
         super.deliverResult(data);
-        if (mCachedFreeLeads != data)
-            mCachedFreeLeads = data;
+        mCachedFreeLeads = data;
     }
 }
