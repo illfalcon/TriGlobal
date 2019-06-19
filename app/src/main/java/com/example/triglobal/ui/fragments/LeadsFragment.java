@@ -59,10 +59,6 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onRefresh() {
-        Log.d(TAG, "onRefresh: ");
-        loaded = false;
-        mLeads = new ArrayList<>();
-        mAdapter.updateData(mLeads);
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -85,19 +81,9 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: loaded = " + loaded);
-        Log.d(TAG, "onResume: mLeads empty? " + mLeads.isEmpty());
-        networkChangeReceiver = new NetworkChangeReceiver();
-        networkChangeReceiver.onConnectionAction = () -> {
-            mLeadsError.setVisibility(View.GONE);
-            if (!loaded)
-                getLoaderManager().restartLoader(0, null, this);
-        };
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         getActivity().registerReceiver(networkChangeReceiver, filter);
-        if (!loaded) {
-            getLoaderManager().restartLoader(0, null, this);
-        }
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -121,11 +107,6 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         return view;
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
-
     @NonNull
     @Override
     public Loader<List<Lead>> onCreateLoader(int i, @Nullable Bundle bundle) {
@@ -137,37 +118,21 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(@NonNull Loader<List<Lead>> loader, List<Lead> leads) {
         mLeadsError.setVisibility(View.GONE);
-        Log.d(TAG, "onLoadFinished: leads == null: " + (leads == null));
-        Log.d(TAG, "onLoadFinished: loaded: " + loaded);
-        if (leads != null) {
-            Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
-            mLeads = leads;
-            loaded = true;
-        } else {
-            if (!loaded) {
+        if (mLeads != leads) {
+            if (leads != null) {
+                Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
+                mLeads = leads;
+                loaded = true;
+                mAdapter.updateData(mLeads);
+            } else {
                 mLeadsError.setVisibility(View.VISIBLE);
             }
         }
-        mAdapter.updateData(mLeads);
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(LOADED_KEY, loaded);
-    }
-
-    @Override
     public void onLoaderReset(@NonNull Loader<List<Lead>> loader) {
-        mSwipeRefreshLayout.setRefreshing(true);
-        mLeadsError.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
     }
 
     @Override
@@ -177,5 +142,10 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mLeads = new ArrayList<>();
         onItemClickListener = (Lead lead) -> mListener.onLeadChoice(lead);
         mAdapter = new LeadsAdapter(this.getContext(), mLeads, onItemClickListener);
+        networkChangeReceiver = new NetworkChangeReceiver();
+        networkChangeReceiver.onConnectionAction = () -> {
+            mLeadsError.setVisibility(View.GONE);
+            getLoaderManager().initLoader(0, null, this);
+        };
     }
 }

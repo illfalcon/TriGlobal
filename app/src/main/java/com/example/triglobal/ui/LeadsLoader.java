@@ -15,6 +15,7 @@ public class LeadsLoader extends AsyncTaskLoader<List<Lead>> {
     private static final String TAG = LeadsLoader.class.getSimpleName();
 
      private ListFetcher listFetcher;
+     private List<Lead> mCachedLeads;
 
      public LeadsLoader(Context context) {
          super(context);
@@ -23,7 +24,10 @@ public class LeadsLoader extends AsyncTaskLoader<List<Lead>> {
 
     @Override
     protected void onStartLoading() {
-         forceLoad();
+         if (mCachedLeads == null)
+            forceLoad();
+         else
+             deliverResult(mCachedLeads);
     }
 
     @Nullable
@@ -37,5 +41,11 @@ public class LeadsLoader extends AsyncTaskLoader<List<Lead>> {
              Log.d(TAG, "loadInBackground: " + e.getMessage());
          }
          return null;
+    }
+
+    @Override
+    public void deliverResult(@Nullable List<Lead> data) {
+        super.deliverResult(data);
+        mCachedLeads = data;
     }
 }

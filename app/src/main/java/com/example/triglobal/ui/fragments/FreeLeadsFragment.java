@@ -52,21 +52,16 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 @Override
                 public void onLoadFinished(@NonNull Loader<List<FreeLead>> loader, List<FreeLead> freeLeads) {
                     mFreeLeadsError.setVisibility(View.GONE);
-                    if (freeLeads != null) {
-                        if (freeLeads != mFreeLeads) {
-                            Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
-                                    o1.getTimeLeft().compareTo(o2.getTimeLeft()));
-                            mFreeLeads = freeLeads;
-                            Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
-                            loaded = true;
-                            mAdapter.updateData(mFreeLeads);
-                        } else {
-                            loaded = true;
-                        }
+                    if (freeLeads != null && freeLeads != mFreeLeads) {
+                        Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
+                                o1.getTimeLeft().compareTo(o2.getTimeLeft()));
+                        mFreeLeads = freeLeads;
+                        Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
+                        loaded = true;
+                        mAdapter.updateData(mFreeLeads);
                     } else {
                         if (!loaded) {
                             mFreeLeadsError.setVisibility(View.VISIBLE);
-                            mAdapter.updateData(mFreeLeads);
                         }
                     }
                     mSwipeRefreshLayout.setRefreshing(false);
@@ -74,8 +69,6 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
 
                 @Override
                 public void onLoaderReset(@NonNull Loader<List<FreeLead>> loader) {
-//                    mSwipeRefreshLayout.setRefreshing(true);
-//                    mFreeLeadsError.setVisibility(View.GONE);
                 }
             };
 
@@ -120,16 +113,20 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         super.onCreate(savedInstanceState);
         mFreeLeads = new ArrayList<>();
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
-        onFreeLeadPurchase = (FreeLead freeLead) -> {
-            new BuyResponseAsyncTask(s -> {
-                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-                if (s.equals("success")) {
-                    loaded = false;
-                    getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
-                }
-            }).execute(freeLead.getId());
-        };
+        onFreeLeadPurchase = (FreeLead freeLead) -> new BuyResponseAsyncTask(s -> {
+            Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+            if (s.equals("success")) {
+                loaded = false;
+                getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+            }
+        }).execute(freeLead.getId());
         mAdapter = new FreeLeadsAdapter(this.getContext(), mFreeLeads, onFreeLeadClickListener, onFreeLeadPurchase);
+        networkChangeReceiver = new NetworkChangeReceiver();
+        networkChangeReceiver.onConnectionAction = () ->
+        {
+            mFreeLeadsError.setVisibility(View.GONE);
+            getLoaderManager().initLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+        };
     }
 
     @Override
@@ -148,19 +145,9 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onResume() {
         super.onResume();
-        networkChangeReceiver = new NetworkChangeReceiver();
-        networkChangeReceiver.onConnectionAction = () ->
-        {
-            mFreeLeadsError.setVisibility(View.GONE);
-            if (!loaded) {
-                getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
-            }
-        };
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         getActivity().registerReceiver(networkChangeReceiver, filter);
-        if (!loaded) {
-            getLoaderManager().initLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
-        }
+        getLoaderManager().initLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
     }
 
     @Override
