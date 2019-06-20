@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.triglobal.R;
 import com.example.triglobal.models.FreeLead;
+import com.example.triglobal.ui.AnimationHelper;
 
 import java.util.List;
 
@@ -26,9 +29,12 @@ public class FreeLeadsAdapter extends
     private OnFreeLeadPurchase onFreeLeadPurchase;
     private List<FreeLead> mFreeLeadList;
     private LayoutInflater mLayoutInflater;
+//    private Animation mSlideUp;
+//    private Animation mSlideDown;
 
     public FreeLeadsAdapter(Context context,
-                        List<FreeLead> freeLeads, OnFreeLeadClickListener onFreeLeadClickListener, OnFreeLeadPurchase purchaseListener) {
+                        List<FreeLead> freeLeads, OnFreeLeadClickListener onFreeLeadClickListener,
+                            OnFreeLeadPurchase purchaseListener) {
         mLayoutInflater = LayoutInflater.from(context);
         mFreeLeadList = freeLeads;
         this.onFreeLeadClickListener = onFreeLeadClickListener;
@@ -99,9 +105,7 @@ public class FreeLeadsAdapter extends
                 int pos = getLayoutPosition();
                 toggleVisibility(pos);
             };
-            onBuyListener = v -> {
-                onFreeLeadPurchase.onFreeLeadBuyClicked(mFreeLeadList.get(getLayoutPosition()));
-            };
+            onBuyListener = v -> onFreeLeadPurchase.onFreeLeadBuyClicked(mFreeLeadList.get(getLayoutPosition()));
             mFreeLeadFrom = itemView.findViewById(R.id.freelead_from);
             mFreeLeadTo = itemView.findViewById(R.id.freelead_to);
             mDownArrow = itemView.findViewById(R.id.freelead_downarrow);
@@ -122,10 +126,12 @@ public class FreeLeadsAdapter extends
             FreeLead freeLead = mFreeLeadList.get(viewPosition);
             if (freeLead.isVisible()) {
                 freeLead.setVisible(false);
-                mInvisiblePart.setVisibility(View.GONE);
+//                mInvisiblePart.setVisibility(View.GONE);
+                AnimationHelper.collapse(this.mInvisiblePart);
             } else {
                 freeLead.setVisible(true);
-                mInvisiblePart.setVisibility(View.VISIBLE);
+//                mInvisiblePart.setVisibility(View.VISIBLE);
+                AnimationHelper.expand(this.mInvisiblePart);
             }
         }
 

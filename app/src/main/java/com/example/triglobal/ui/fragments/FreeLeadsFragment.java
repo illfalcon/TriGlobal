@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +74,8 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 }
             };
 
+//    private Animation slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
+//    private Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
     private RecyclerView mRecyclerView;
     private FreeLeadsAdapter mAdapter;
     private List<FreeLead> mFreeLeads;
