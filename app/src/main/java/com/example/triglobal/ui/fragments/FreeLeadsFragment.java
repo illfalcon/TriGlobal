@@ -48,7 +48,11 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 public Loader<List<FreeLead>> onCreateLoader(int i, @Nullable Bundle bundle) {
                     mSwipeRefreshLayout.setRefreshing(true);
                     mFreeLeadsError.setVisibility(View.GONE);
-                    return new FreeLeadsLoader(getContext());
+                    return new FreeLeadsLoader(getContext(),
+                            () -> getActivity().runOnUiThread(
+                                    () -> Toast.makeText(getContext(), "NoInternet", Toast.LENGTH_SHORT).show()
+                            )
+                    );
                 }
 
                 @Override
@@ -118,10 +122,14 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mFreeLeads = new ArrayList<>();
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
         onFreeLeadPurchase = (FreeLead freeLead) -> new BuyResponseAsyncTask(s -> {
-            Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-            if (s.equals("success")) {
-                loaded = false;
-                getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+            if (s != null) {
+                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+                if (s.equals("success")) {
+                    loaded = false;
+                    getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+                }
+            } else {
+                Toast.makeText(getContext(), "An error ocurred ", Toast.LENGTH_SHORT).show();
             }
         }).execute(freeLead.getId());
         mAdapter = new FreeLeadsAdapter(this.getContext(), mFreeLeads, onFreeLeadClickListener, onFreeLeadPurchase);

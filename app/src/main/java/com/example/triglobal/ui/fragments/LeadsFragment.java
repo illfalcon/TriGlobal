@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.triglobal.R;
 import com.example.triglobal.broadcast.NetworkChangeReceiver;
@@ -114,7 +115,11 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<List<Lead>> onCreateLoader(int i, @Nullable Bundle bundle) {
         mSwipeRefreshLayout.setRefreshing(true);
         mLeadsError.setVisibility(View.GONE);
-        return new LeadsLoader(this.getContext());
+        return new LeadsLoader(this.getContext(),
+                () -> getActivity().runOnUiThread(
+                        () -> Toast.makeText(getContext(), "NoInternet", Toast.LENGTH_SHORT).show()
+                )
+        );
     }
 
     @Override

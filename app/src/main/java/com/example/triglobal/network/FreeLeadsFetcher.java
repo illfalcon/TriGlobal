@@ -3,6 +3,7 @@ package com.example.triglobal.network;
 import android.util.Log;
 
 import com.example.triglobal.exceptions.FetchingException;
+import com.example.triglobal.exceptions.NoInternetException;
 import com.example.triglobal.exceptions.SerializationException;
 import com.example.triglobal.models.FreeLead;
 import com.example.triglobal.models.JSONFreeLeadsDeserializer;
@@ -26,12 +27,14 @@ public class FreeLeadsFetcher implements ListFetcher {
     public FreeLeadsFetcher() { listDeserializer = new JSONFreeLeadsDeserializer(); }
 
     @Override
-    public List<FreeLead> fetchList() throws FetchingException, SerializationException {
+    public List<FreeLead> fetchList() throws FetchingException, SerializationException, NoInternetException {
         return deserializeData(loadData());
     }
 
-    private String loadData() throws FetchingException {
+    private String loadData() throws FetchingException, NoInternetException {
         Log.d(TAG, "loadData: started loading data");
+        if (!NetworkChecker.hasActiveInternetConnection())
+            throw new NoInternetException("Error in loadDate: no internet");
         try {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");

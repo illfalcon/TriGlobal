@@ -3,6 +3,7 @@ package com.example.triglobal.network;
 import android.util.Log;
 
 import com.example.triglobal.exceptions.FetchingException;
+import com.example.triglobal.exceptions.NoInternetException;
 
 import java.io.IOException;
 
@@ -20,7 +21,9 @@ public class BuyLeadResponseFetcher implements ResponseFetcher<String, Integer> 
 
     }
 
-    private String loadResponse(int reId) throws FetchingException {
+    private String loadResponse(int reId) throws FetchingException, NoInternetException {
+        if (!NetworkChecker.hasActiveInternetConnection())
+            throw new NoInternetException("Error in loadResponse: no internet");
         Log.d(TAG, "loadData: started loading data");
         try {
             OkHttpClient client = new OkHttpClient();
@@ -46,7 +49,7 @@ public class BuyLeadResponseFetcher implements ResponseFetcher<String, Integer> 
     }
 
     @Override
-    public String fetchResponse(Integer arg) throws FetchingException {
+    public String fetchResponse(Integer arg) throws FetchingException, NoInternetException {
         return loadResponse(arg);
     }
 }

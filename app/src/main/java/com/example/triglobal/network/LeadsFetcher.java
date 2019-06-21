@@ -3,6 +3,7 @@ package com.example.triglobal.network;
 import android.util.Log;
 
 import com.example.triglobal.exceptions.FetchingException;
+import com.example.triglobal.exceptions.NoInternetException;
 import com.example.triglobal.exceptions.SerializationException;
 import com.example.triglobal.models.JSONFreeLeadsDeserializer;
 import com.example.triglobal.models.JSONLeadsDeserializer;
@@ -10,6 +11,7 @@ import com.example.triglobal.models.Lead;
 import com.example.triglobal.models.ListDeserializer;
 
 import java.io.IOException;
+import java.nio.channels.NonWritableChannelException;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -27,20 +29,22 @@ public class LeadsFetcher implements ListFetcher {
         listDeserializer = new JSONFreeLeadsDeserializer();
     }
 
-    public List<Lead> fetchList() throws FetchingException, SerializationException {
+    public List<Lead> fetchList() throws FetchingException, SerializationException, NoInternetException {
         String data = loadData();
         List<Lead> leads = deserializeData(data);
         return leads;
     }
 
-    private String loadData() throws FetchingException {
+    private String loadData() throws FetchingException, NoInternetException {
         Log.d(TAG, "loadData: started loading data");
+        if (!NetworkChecker.hasActiveInternetConnection())
+            throw new NoInternetException("Error in loadDate: no internet");
         try {
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
             RequestBody body = RequestBody.create(mediaType, "------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"token\"\n\nCdcZ5TqsTS\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"id\"\n\n1\n------WebKitFormBoundary7MA4YWxkTrZu0gW--");
             Request request = new Request.Builder()
-                    .url("https://public.triglobal-test-back.nl/api/freeleads.php")
+                    .url("https://public.triglobal.info/api/requests.php")
                     .post(body)
                     .addHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
                     .addHeader("cache-control", "no-cache")
