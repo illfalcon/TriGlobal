@@ -162,6 +162,8 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == LeadsLoader.MSG_NO_INTERNET) {
+                    Log.d(TAG, "handleMessage: NetworkChecker.isNetworkAvailable(mContext) = " +
+                            NetworkChecker.isNetworkAvailable(mContext));
                     if (!NetworkChecker.isNetworkAvailable(mContext))
                         mWaitingForNetwork.setVisibility(View.VISIBLE);
                     else

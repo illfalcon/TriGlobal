@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -43,6 +45,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
 
     public static final String TAG = FreeLeadsFragment.class.getSimpleName();
     private static final int FREE_LEADS_LOADER_ID = 0;
+    private static final String WAITING_VISIBILITY = "waiting";
 
     private LoaderManager.LoaderCallbacks<List<FreeLead>> freeLeadsLoader =
             new LoaderManager.LoaderCallbacks<List<FreeLead>>() {
@@ -51,17 +54,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 public Loader<List<FreeLead>> onCreateLoader(int i, @Nullable Bundle bundle) {
                     mSwipeRefreshLayout.setRefreshing(true);
                     mFreeLeadsError.setVisibility(View.GONE);
-                    return new FreeLeadsLoader(getContext(),
-                            () -> getActivity().runOnUiThread(
-                                    () -> {
-                                        if (!NetworkChecker.isNetworkAvailable(getContext()))
-                                            mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
-                                        else
-                                            Toast.makeText(getContext(), "Error with network connection", Toast.LENGTH_SHORT).show();
-
-                                    }
-                            )
-                    );
+                    return new FreeLeadsLoader(getContext(), mHandler);
                 }
 
                 @Override
@@ -87,6 +80,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 }
             };
 
+    private Handler mHandler;
     private RecyclerView mRecyclerView;
     private FreeLeadsAdapter mAdapter;
     private List<FreeLead> mFreeLeads;
@@ -98,6 +92,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     private boolean loaded;
     private OnFreeLeadFragmentInteractionListener mListener;
     private NetworkChangeReceiver networkChangeReceiver;
+    private Context mContext;
 
     public FreeLeadsFragment() {
         // Required empty public constructor
@@ -115,6 +110,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         Log.d(TAG, "onAttach: ");
         if (context instanceof OnFreeLeadFragmentInteractionListener) {
             mListener = (OnFreeLeadFragmentInteractionListener) context;
@@ -161,6 +157,19 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
             }
         };
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == FreeLeadsLoader.MSG_NO_INTERNET) {
+                    Log.d(TAG, "handleMessage: NetworkChecker.isNetworkAvailable(mContext) = " +
+                            NetworkChecker.isNetworkAvailable(mContext));
+                    if (!NetworkChecker.isNetworkAvailable(mContext))
+                        mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
+                    else
+                        Toast.makeText(getContext(), "Error with network connection", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
     }
 
     @Override
@@ -174,6 +183,8 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFreeLeadsError = view.findViewById(R.id.freeleads_error_message);
         mFreeLeadsWaitingForNetwork = view.findViewById(R.id.freeleads_no_internet_message);
+        if (savedInstanceState != null)
+            mFreeLeadsWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
         return view;
     }
 
@@ -199,4 +210,9 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(WAITING_VISIBILITY, mFreeLeadsWaitingForNetwork.getVisibility());
+    }
 }
