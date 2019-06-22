@@ -51,6 +51,16 @@
             android:id="@+id/freeleads_error_message"
             android:text="@string/leads_error"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textColor="#E91E63"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:id="@+id/freeleads_no_internet_message"
+            android:text="@string/waiting_for_network"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/freeleads_recyclerview"

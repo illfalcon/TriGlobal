@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.triglobal.R;
 import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.Lead;
+import com.example.triglobal.network.NetworkChecker;
 import com.example.triglobal.ui.LeadsLoader;
 import com.example.triglobal.ui.recycler.LeadsAdapter;
 
@@ -45,6 +46,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     private OnLeadFragmentInteractionListener mListener;
     private TextView mLeadsError;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TextView mWaitingForNetwork;
     private boolean loaded;
 
     private LeadsAdapter.onItemClickListener onItemClickListener;
@@ -107,6 +109,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mLeadsError = view.findViewById(R.id.leads_error_message);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        mWaitingForNetwork = view.findViewById(R.id.leads_no_internet_message);
         return view;
     }
 
@@ -117,7 +120,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mLeadsError.setVisibility(View.GONE);
         return new LeadsLoader(this.getContext(),
                 () -> getActivity().runOnUiThread(
-                        () -> Toast.makeText(getContext(), "NoInternet", Toast.LENGTH_SHORT).show()
+                        () -> mWaitingForNetwork.setVisibility(View.VISIBLE)
                 )
         );
     }
@@ -131,7 +134,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
             loaded = true;
             mAdapter.updateData(mLeads);
         } else {
-            if (!loaded)
+            if (!loaded && NetworkChecker.isNetworkAvailable(getContext()))
                 mLeadsError.setVisibility(View.VISIBLE);
         }
         mSwipeRefreshLayout.setRefreshing(false);
@@ -149,7 +152,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mAdapter = new LeadsAdapter(this.getContext(), mLeads, onItemClickListener);
         networkChangeReceiver = new NetworkChangeReceiver();
         networkChangeReceiver.onConnectionAction = () -> {
-            mLeadsError.setVisibility(View.GONE);
+            mWaitingForNetwork.setVisibility(View.GONE);
             if (!loaded)
                 getLoaderManager().restartLoader(0, null, this);
         };

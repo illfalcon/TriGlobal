@@ -12,12 +12,15 @@ import java.net.URL;
 public class NetworkChecker {
     private static final String LOG_TAG = NetworkChecker.class.getSimpleName();
 
-//    private static boolean isNetworkAvailable(Context context) {
-//        ConnectivityManager connectivityManager
-//                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-//        return activeNetworkInfo != null;
-//    }
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
 
     public static boolean hasActiveInternetConnection() {
         try {

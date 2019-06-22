@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.triglobal.R;
 import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.FreeLead;
+import com.example.triglobal.network.NetworkChecker;
 import com.example.triglobal.ui.BuyResponseAsyncTask;
 import com.example.triglobal.ui.FreeLeadsLoader;
 import com.example.triglobal.ui.recycler.FreeLeadsAdapter;
@@ -50,7 +51,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                     mFreeLeadsError.setVisibility(View.GONE);
                     return new FreeLeadsLoader(getContext(),
                             () -> getActivity().runOnUiThread(
-                                    () -> Toast.makeText(getContext(), "NoInternet", Toast.LENGTH_SHORT).show()
+                                    () -> mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE)
                             )
                     );
                 }
@@ -66,7 +67,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                         loaded = true;
                         mAdapter.updateData(mFreeLeads);
                     } else {
-                        if (!loaded) {
+                        if (!loaded && NetworkChecker.isNetworkAvailable(getContext())) {
                             mFreeLeadsError.setVisibility(View.VISIBLE);
                         }
                     }
@@ -78,14 +79,13 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 }
             };
 
-//    private Animation slideDown = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
-//    private Animation slideUp = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
     private RecyclerView mRecyclerView;
     private FreeLeadsAdapter mAdapter;
     private List<FreeLead> mFreeLeads;
     private FreeLeadsAdapter.OnFreeLeadClickListener onFreeLeadClickListener;
     private FreeLeadsAdapter.OnFreeLeadPurchase onFreeLeadPurchase;
     private TextView mFreeLeadsError;
+    private TextView mFreeLeadsWaitingForNetwork;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean loaded;
     private OnFreeLeadFragmentInteractionListener mListener;
@@ -137,7 +137,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         networkChangeReceiver.onConnectionAction = () ->
         {
             if (!loaded) {
-                mFreeLeadsError.setVisibility(View.GONE);
+                mFreeLeadsWaitingForNetwork.setVisibility(View.GONE);
                 Log.d(TAG, "onCreate: startLoader");
                 getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
             }
@@ -154,6 +154,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFreeLeadsError = view.findViewById(R.id.freeleads_error_message);
+        mFreeLeadsWaitingForNetwork = view.findViewById(R.id.freeleads_no_internet_message);
         return view;
     }
 
