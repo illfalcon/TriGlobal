@@ -27,7 +27,7 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
     private static final String LEADSTRING = "leadString";
     private Lead mLead;
 
-    private TextView mMovingDate, mVolumeM3, mVolumeFt3, mContents, mAssembly, mStorage;
+    private TextView mMovingDate, mVolumeM3, mVolumeFt3, mContents, mAssembly, mStorage, mAddedDate;
     private CheckBox mBusiness, mPacking;
 
     private TextView mCompanyName, mName, mTelephone1, mTelephone2, mEmail;
@@ -77,6 +77,7 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
         mZipcodeTo = getView().findViewById(R.id.zipcode_to);
         mCityTo = getView().findViewById(R.id.city_to);
         mCountryTo = getView().findViewById(R.id.country_to);
+        mAddedDate = getView().findViewById(R.id.lead_added_date);
     }
 
     private void setViewValues(Lead lead) {
@@ -111,6 +112,7 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
         mZipcodeTo.setText(lead.getZipcodeTo());
         mCityTo.setText(lead.getCityTo());
         mCountryTo.setText(lead.getCoCodeTo());
+        mAddedDate.setText(lead.getAddedTime());
     }
 
     @Override

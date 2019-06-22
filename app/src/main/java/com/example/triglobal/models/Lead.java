@@ -1,8 +1,10 @@
 package com.example.triglobal.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,6 +55,9 @@ public class Lead {
     private String email;
     @JsonProperty("re_remarks")
     private String remarks;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonProperty("ktrecupo_timestamp")
+    private Date addedTime;
 
     //field necessary for proper ui functioning
     private boolean visible;
@@ -153,6 +158,14 @@ public class Lead {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public String getAddedTime() {
+        if (addedTime != null) {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return df.format(addedTime);
+        }
+        return "";
     }
 
 //    public String getContents() {

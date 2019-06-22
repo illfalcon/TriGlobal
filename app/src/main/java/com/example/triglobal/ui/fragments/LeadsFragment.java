@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -39,6 +41,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = LeadsFragment.class.getSimpleName();
     private static NetworkChangeReceiver networkChangeReceiver;
+    private static final String WAITING_VISIBILITY = "waiting";
 
     private RecyclerView mRecyclerView;
     private LeadsAdapter mAdapter;
@@ -48,6 +51,8 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mWaitingForNetwork;
     private boolean loaded;
+    private Handler mHandler;
+    private Context mContext;
 
     private LeadsAdapter.onItemClickListener onItemClickListener;
 
@@ -74,6 +79,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         Log.d(TAG, "onAttach: ");
         if (context instanceof OnLeadFragmentInteractionListener) {
             mListener = (OnLeadFragmentInteractionListener) context;
@@ -99,6 +105,12 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(WAITING_VISIBILITY, mWaitingForNetwork.getVisibility());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: ");
@@ -110,6 +122,8 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mWaitingForNetwork = view.findViewById(R.id.leads_no_internet_message);
+        if (savedInstanceState != null)
+            mWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
         return view;
     }
 
@@ -118,11 +132,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<List<Lead>> onCreateLoader(int i, @Nullable Bundle bundle) {
         mSwipeRefreshLayout.setRefreshing(true);
         mLeadsError.setVisibility(View.GONE);
-        return new LeadsLoader(this.getContext(),
-                () -> getActivity().runOnUiThread(
-                        () -> mWaitingForNetwork.setVisibility(View.VISIBLE)
-                )
-        );
+        return new LeadsLoader(this.getContext(), mHandler);
     }
 
     @Override
@@ -148,6 +158,17 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLeads = new ArrayList<>();
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == LeadsLoader.MSG_NO_INTERNET) {
+                    if (!NetworkChecker.isNetworkAvailable(mContext))
+                        mWaitingForNetwork.setVisibility(View.VISIBLE);
+                    else
+                        Toast.makeText(getContext(), "Error with network connection", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
         onItemClickListener = (Lead lead) -> mListener.onLeadChoice(lead);
         mAdapter = new LeadsAdapter(this.getContext(), mLeads, onItemClickListener);
         networkChangeReceiver = new NetworkChangeReceiver();

@@ -2,6 +2,7 @@ package com.example.triglobal.ui.fragments;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -51,7 +53,13 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                     mFreeLeadsError.setVisibility(View.GONE);
                     return new FreeLeadsLoader(getContext(),
                             () -> getActivity().runOnUiThread(
-                                    () -> mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE)
+                                    () -> {
+                                        if (!NetworkChecker.isNetworkAvailable(getContext()))
+                                            mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
+                                        else
+                                            Toast.makeText(getContext(), "Error with network connection", Toast.LENGTH_SHORT).show();
+
+                                    }
                             )
                     );
                 }
@@ -121,23 +129,34 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         super.onCreate(savedInstanceState);
         mFreeLeads = new ArrayList<>();
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
-        onFreeLeadPurchase = (FreeLead freeLead) -> new BuyResponseAsyncTask(s -> {
-            if (s != null) {
-                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
-                if (s.equals("success")) {
-                    loaded = false;
-                    getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
-                }
-            } else {
-                Toast.makeText(getContext(), "An error ocurred ", Toast.LENGTH_SHORT).show();
-            }
-        }).execute(freeLead.getId());
+        onFreeLeadPurchase = (FreeLead freeLead) ->
+                new AlertDialog.Builder(getContext()).setTitle("Free Lead Purchase")
+                .setMessage("Are you sure you want to buy this free lead for " + freeLead.getCost())
+                .setPositiveButton("Yes", (dialog, which) ->
+                        new BuyResponseAsyncTask(s -> {
+                            if (s != null) {
+                                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
+                                if (s.equals("success")) {
+                                    loaded = false;
+                                    getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+                                }
+                            } else {
+                                if (NetworkChecker.isNetworkAvailable(getContext()))
+                                    Toast.makeText(getContext(), "An error ocurred", Toast.LENGTH_SHORT).show();
+                                else {
+                                    Toast.makeText(getContext(), "Need network to purchase a lead", Toast.LENGTH_SHORT).show();
+                                    mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
+                                }
+                            }
+                }).execute(freeLead.getId()))
+                .setNegativeButton("No", null)
+                .show();
         mAdapter = new FreeLeadsAdapter(this.getContext(), mFreeLeads, onFreeLeadClickListener, onFreeLeadPurchase);
         networkChangeReceiver = new NetworkChangeReceiver();
         networkChangeReceiver.onConnectionAction = () ->
         {
+            mFreeLeadsWaitingForNetwork.setVisibility(View.GONE);
             if (!loaded) {
-                mFreeLeadsWaitingForNetwork.setVisibility(View.GONE);
                 Log.d(TAG, "onCreate: startLoader");
                 getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
             }

@@ -41,4 +41,5 @@
     <string name="to">To</string>
     <string name="time_left">Time Left</string>
     <string name="waiting_for_network">Waiting for network...</string>
+    <string name="lead_added_date">Lead Added Date</string>
 </resources>
