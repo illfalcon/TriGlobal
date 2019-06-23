@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String FRAGMENT_KEY = "curFragment";
     private static final String LEAD_KEY = "curLead";
+    private static final String ROOT_TAG = "root";
 
     private boolean addNewFragment;
 
@@ -67,19 +68,34 @@ public class MainActivity extends AppCompatActivity implements
         mFragmentManager = getSupportFragmentManager();
         if (savedInstanceState != null && savedInstanceState.getString(FRAGMENT_KEY) != null) {
             mCurFragmentName = savedInstanceState.getString(FRAGMENT_KEY);
-        }
-        if (savedInstanceState == null)
+        } else {
             startLeadFragment();
-
-        mFragmentManager.addOnBackStackChangedListener(() -> {
-            Log.i(LOG_TAG, "back stack changed ");
-            Fragment fr = mFragmentManager.findFragmentById(R.id.fragment_container);
-            if (fr != null) {
-                mCurFragmentName = fr.getClass().getSimpleName();
-                Log.d(LOG_TAG, "onCreate: " + mCurFragmentName);
-            }
-        });
+        }
+//        mFragmentManager.addOnBackStackChangedListener(() -> {
+//            Log.i(LOG_TAG, "back stack changed ");
+//            Fragment fr = mFragmentManager.findFragmentById(R.id.fragment_container);
+//            if (fr != null) {
+//                mCurFragmentName = fr.getClass().getSimpleName();
+//                Log.d(LOG_TAG, "onCreate: " + mCurFragmentName);
+//                if (mCurFragmentName.equals(LeadsFragment.TAG))
+//                    navView.getMenu().findItem(R.id.navigation_leads).setChecked(true);
+//                else if (mCurFragmentName.equals(FreeLeadsFragment.TAG))
+//                    navView.getMenu().findItem(R.id.navigation_free_leads).setChecked(true);
+//            }
+//        });
     }
+
+//    private void popAllBackStack() {
+//        mFragmentManager.popBackStack(ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//    }
+
+//    @Override
+//    public void onBackPressed() {
+//        if (mFragmentManager.getBackStackEntryCount() > 1)
+//            super.onBackPressed();
+//        else
+//            finish();
+//    }
 
     @Override
     protected void onDestroy() {
@@ -88,13 +104,15 @@ public class MainActivity extends AppCompatActivity implements
 
     private void startLeadFragment() {
         if (mCurFragmentName == null || !mCurFragmentName.equals(LeadsFragment.TAG)) {
-            LeadsFragment leadsFragment = LeadsFragment.newInstance();
+            //popAllBackStack();
+            if (mLeadsFragment == null)
+                mLeadsFragment = LeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, leadsFragment);
-            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.fragment_container, mLeadsFragment);
+            //fragmentTransaction.addToBackStack(ROOT_TAG);
             fragmentTransaction.commit();
             mCurFragmentName = LeadsFragment.TAG;
-            mCurFragment = leadsFragment;
+            mCurFragment = mLeadsFragment;
         }
     }
 
@@ -112,13 +130,14 @@ public class MainActivity extends AppCompatActivity implements
 
     public void startFreeLeadsFragment() {
         if (!mCurFragmentName.equals(FreeLeadsFragment.TAG)) {
-            FreeLeadsFragment freeLeadsFragment = FreeLeadsFragment.newInstance();
+            if (mFreeLeadsFragment == null)
+                mFreeLeadsFragment = FreeLeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, freeLeadsFragment);
-            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.fragment_container, mFreeLeadsFragment);
+            //fragmentTransaction.addToBackStack(ROOT_TAG);
             fragmentTransaction.commit();
             mCurFragmentName = FreeLeadsFragment.TAG;
-            mCurFragment = freeLeadsFragment;
+            mCurFragment = mFreeLeadsFragment;
         }
     }
 
