@@ -1,60 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/refresh_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".ui.fragments.LeadsFragment">
-
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_height="wrap_content"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinator_leads"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.v4.widget.SwipeRefreshLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/refresh_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:padding="6dp"
-            android:background="@color/colorAccent"
-            android:orientation="horizontal">
-            <TextView
-                android:textColor="#FFFFFF"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".ui.fragments.LeadsFragment">
+
+            <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="@string/name_label"/>
+                android:layout_width="match_parent"
+                android:padding="6dp"
+                android:background="@color/colorAccent"
+                android:orientation="horizontal">
+                <TextView
+                    android:textColor="#FFFFFF"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:text="@string/name_label"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:text="@string/moving_date_label"/>
+            </LinearLayout>
+
             <TextView
-                android:layout_width="0dp"
-                android:textColor="#FFFFFF"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="@string/moving_date_label"/>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:textColor="#E91E63"
-            android:textSize="36sp"
-            android:visibility="gone"
-            android:id="@+id/leads_error_message"
-            android:text="@string/leads_error"/>
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:textColor="#F44336"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:id="@+id/leads_error_message"
+                android:text="@string/leads_error"/>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:textColor="#E91E63"
-            android:textSize="12sp"
-            android:visibility="gone"
-            android:id="@+id/leads_no_internet_message"
-            android:text="@string/waiting_for_network"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:textColor="#E91E63"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:id="@+id/leads_no_internet_message"
+                android:text="@string/waiting_for_network"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/leads_recyclerview"
@@ -62,5 +67,7 @@
                 android:layout_height="match_parent">
             </android.support.v7.widget.RecyclerView>
 
-    </LinearLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</android.support.design.widget.CoordinatorLayout>

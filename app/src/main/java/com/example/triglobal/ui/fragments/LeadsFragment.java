@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -53,6 +55,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     private boolean loaded;
     private Handler mHandler;
     private Context mContext;
+    private CoordinatorLayout mCoordinator;
 
     private LeadsAdapter.onItemClickListener onItemClickListener;
 
@@ -121,6 +124,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mLeadsError = view.findViewById(R.id.leads_error_message);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        mCoordinator = view.findViewById(R.id.coordinator_leads);
         mWaitingForNetwork = view.findViewById(R.id.leads_no_internet_message);
         if (savedInstanceState != null)
             mWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
@@ -144,8 +148,9 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
             loaded = true;
             mAdapter.updateData(mLeads);
         } else {
-            if (!loaded && NetworkChecker.isNetworkAvailable(getContext()))
+            if (!loaded && NetworkChecker.isNetworkAvailable(getContext())) {
                 mLeadsError.setVisibility(View.VISIBLE);
+            }
         }
         mSwipeRefreshLayout.setRefreshing(false);
     }
@@ -167,7 +172,8 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
                     if (!NetworkChecker.isNetworkAvailable(mContext))
                         mWaitingForNetwork.setVisibility(View.VISIBLE);
                     else
-                        Toast.makeText(getContext(), "Error with network connection", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mCoordinator, "Unable to connect to the internet, please check your network configuration", Snackbar.LENGTH_LONG)
+                        .show();
                 }
             }
         };

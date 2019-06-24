@@ -32,7 +32,7 @@
     <string name="name_label">Name</string>
     <string name="moving_date_label">Moving Date</string>
     <string name="contents">Contents</string>
-    <string name="leads_error">Unable to load leads, please, check your internet connection</string>
+    <string name="leads_error">Cannot load leads</string>
     <string name="buy_free_lead">Buy Free Lead</string>
     <string name="moving_size">Moving Size</string>
     <string name="moving_date">Moving Date</string>
@@ -40,6 +40,6 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="time_left">Time Left</string>
-    <string name="waiting_for_network">Waiting for network...</string>
+    <string name="waiting_for_network">Waiting for network…</string>
     <string name="lead_added_date">Lead Added Date</string>
 </resources>

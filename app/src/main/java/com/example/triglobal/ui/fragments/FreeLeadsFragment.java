@@ -10,6 +10,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -93,6 +95,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     private OnFreeLeadFragmentInteractionListener mListener;
     private NetworkChangeReceiver networkChangeReceiver;
     private Context mContext;
+    private CoordinatorLayout mCoordinator;
 
     public FreeLeadsFragment() {
         // Required empty public constructor
@@ -131,16 +134,22 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 .setPositiveButton("Yes", (dialog, which) ->
                         new BuyResponseAsyncTask(s -> {
                             if (s != null) {
-                                Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
                                 if (s.equals("success")) {
+                                    Snackbar.make(mCoordinator, "You have succesfully purchased " +
+                                            freeLead.getFullName() + "!", Snackbar.LENGTH_LONG).show();
                                     loaded = false;
                                     getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+                                } else {
+                                    Snackbar.make(mCoordinator, "You cannot purchase " +
+                                            freeLead.getFullName() + ".", Snackbar.LENGTH_LONG).show();
                                 }
                             } else {
                                 if (NetworkChecker.isNetworkAvailable(getContext()))
-                                    Toast.makeText(getContext(), "An error ocurred", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(mCoordinator, "An error ocurred, sorry, please try again later", Snackbar.LENGTH_LONG)
+                                            .show();
                                 else {
-                                    Toast.makeText(getContext(), "Need network to purchase a lead", Toast.LENGTH_SHORT).show();
+                                    Snackbar.make(mCoordinator, "Need network to purchase a lead", Snackbar.LENGTH_LONG)
+                                            .show();
                                     mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
                                 }
                             }
@@ -166,7 +175,8 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                     if (!NetworkChecker.isNetworkAvailable(mContext))
                         mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
                     else
-                        Toast.makeText(getContext(), "Error with network connection", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(mCoordinator, "Unable to connect to the internet, please check your network configuration", Snackbar.LENGTH_LONG)
+                                .show();
                 }
             }
         };
@@ -182,6 +192,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFreeLeadsError = view.findViewById(R.id.freeleads_error_message);
+        mCoordinator = view.findViewById(R.id.coordinator_free_leads);
         mFreeLeadsWaitingForNetwork = view.findViewById(R.id.freeleads_no_internet_message);
         if (savedInstanceState != null)
             mFreeLeadsWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
