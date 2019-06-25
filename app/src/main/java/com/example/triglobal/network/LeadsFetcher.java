@@ -26,7 +26,7 @@ public class LeadsFetcher implements ListFetcher {
     private ListDeserializer listDeserializer;
 
     public LeadsFetcher() {
-        listDeserializer = new JSONFreeLeadsDeserializer();
+        listDeserializer = new JSONLeadsDeserializer();
     }
 
     public List<Lead> fetchList() throws FetchingException, SerializationException, NoInternetException {

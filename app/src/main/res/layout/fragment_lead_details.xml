@@ -35,14 +35,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/moving_date"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/moving_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -55,14 +55,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/volume_m3"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/volume_m3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!--<LinearLayout-->
@@ -75,14 +75,14 @@
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_weight="1"-->
                 <!--android:text="@string/contents"-->
-                <!--android:textSize="24sp" />-->
+                <!--android:textSize="14sp" />-->
 
             <!--<TextView-->
                 <!--android:id="@+id/contents"-->
                 <!--android:layout_width="0dp"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:layout_weight="1"-->
-                <!--android:textSize="24sp" />-->
+                <!--android:textSize="14sp" />-->
         <!--</LinearLayout>-->
 
         <LinearLayout
@@ -95,14 +95,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/volume_ft3"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/volume_ft3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -115,14 +115,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/assembly"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/assembly"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -134,14 +134,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/storage"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/storage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -154,14 +154,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/lead_added_date"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/lead_added_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -178,11 +178,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/business"
-                    android:textSize="24sp" />
+                    android:textSize="14sp" />
 
                 <CheckBox
                     android:id="@+id/business"
                     android:clickable="false"
+                    android:enabled="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -196,11 +197,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/packing"
-                    android:textSize="24sp" />
+                    android:textSize="14sp" />
 
                 <CheckBox
                     android:clickable="false"
                     android:id="@+id/packing"
+                    android:enabled="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -224,14 +226,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/company_name"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/company_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -244,14 +246,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/name"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -264,14 +266,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/telephone_1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/telephone_1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:clickable="true"/>
         </LinearLayout>
 
@@ -285,14 +287,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/telephone_2"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/telephone_2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:clickable="true"/>
         </LinearLayout>
 
@@ -306,14 +308,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/email"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:clickable="true"/>
         </LinearLayout>
 
@@ -334,14 +336,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/street"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/street_from"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -354,14 +356,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/zipcode"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/zipcode_from"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -374,14 +376,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/city"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/city_from"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -394,14 +396,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/country"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/country_from"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <TextView
@@ -421,14 +423,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/street"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/street_to"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -441,14 +443,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/zipcode"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/zipcode_to"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -461,14 +463,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/city"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/city_to"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -481,14 +483,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/country"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/country_to"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="24sp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
