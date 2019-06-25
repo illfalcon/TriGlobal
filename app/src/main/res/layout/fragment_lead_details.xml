@@ -326,6 +326,7 @@
                 android:layout_weight="1"
                 android:textSize="14sp"
                 android:ellipsize="end"
+                android:singleLine="true"
                 android:textColor="@color/pink"
                 android:clickable="true"/>
         </LinearLayout>
@@ -355,6 +356,7 @@
                 android:layout_weight="1"
                 android:textSize="14sp"
                 android:ellipsize="end"
+                android:singleLine="true"
                 android:textColor="@color/pink"
                 android:clickable="true"/>
         </LinearLayout>

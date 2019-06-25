@@ -16,30 +16,38 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:id="@+id/freelead_from"/>
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:id="@+id/freelead_to"/>
         <LinearLayout
+            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textSize="16sp"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:id="@+id/freelead_time_left"/>
             <ImageButton
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:id="@+id/freelead_downarrow"
-                android:src="@android:drawable/arrow_down_float"/>
+                android:src="@drawable/ic_arrow_drop_down_black_24dp"
+                android:background="#00FFFFFF"/>
         </LinearLayout>
+
     </LinearLayout>
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
