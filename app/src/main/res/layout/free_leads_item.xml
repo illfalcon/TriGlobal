@@ -114,7 +114,7 @@
     </LinearLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="0.8dp"
         android:visibility="visible"
         android:background="#E91E63"/>
 </LinearLayout>

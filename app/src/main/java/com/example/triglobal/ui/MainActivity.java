@@ -1,5 +1,6 @@
 package com.example.triglobal.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -42,10 +43,12 @@ public class MainActivity extends AppCompatActivity implements
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.navigation_free_leads:
+                        popAllBackStack();
                         startFreeLeadsFragment();
                         Log.d(LOG_TAG, "Free leads clicked");
                         return true;
                     case R.id.navigation_leads:
+                        popAllBackStack();
                         startLeadFragment();
                         Log.d(LOG_TAG, "Leads clicked");
                         return true;
@@ -71,31 +74,35 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             startLeadFragment();
         }
-//        mFragmentManager.addOnBackStackChangedListener(() -> {
-//            Log.i(LOG_TAG, "back stack changed ");
-//            Fragment fr = mFragmentManager.findFragmentById(R.id.fragment_container);
-//            if (fr != null) {
-//                mCurFragmentName = fr.getClass().getSimpleName();
-//                Log.d(LOG_TAG, "onCreate: " + mCurFragmentName);
-//                if (mCurFragmentName.equals(LeadsFragment.TAG))
-//                    navView.getMenu().findItem(R.id.navigation_leads).setChecked(true);
-//                else if (mCurFragmentName.equals(FreeLeadsFragment.TAG))
-//                    navView.getMenu().findItem(R.id.navigation_free_leads).setChecked(true);
-//            }
-//        });
+        mFragmentManager.addOnBackStackChangedListener(() -> {
+            Log.i(LOG_TAG, "back stack changed ");
+            Fragment fr = mFragmentManager.findFragmentById(R.id.fragment_container);
+            if (fr != null) {
+                mCurFragmentName = fr.getClass().getSimpleName();
+                Log.d(LOG_TAG, "onCreate: " + mCurFragmentName);
+                if (mCurFragmentName.equals(LeadsFragment.TAG))
+                    navView.getMenu().findItem(R.id.navigation_leads).setChecked(true);
+                else if (mCurFragmentName.equals(FreeLeadsFragment.TAG))
+                    navView.getMenu().findItem(R.id.navigation_free_leads).setChecked(true);
+            }
+        });
     }
 
-//    private void popAllBackStack() {
-//        mFragmentManager.popBackStack(ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-//    }
+    private void popAllBackStack() {
+        mFragmentManager.popBackStack(ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
 
-//    @Override
-//    public void onBackPressed() {
-//        if (mFragmentManager.getBackStackEntryCount() > 1)
-//            super.onBackPressed();
-//        else
-//            finish();
-//    }
+    @Override
+    public void onBackPressed() {
+        if (mFragmentManager.getBackStackEntryCount() > 1)
+            super.onBackPressed();
+        else {
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startMain);
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -109,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements
                 mLeadsFragment = LeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, mLeadsFragment);
-            //fragmentTransaction.addToBackStack(ROOT_TAG);
+            fragmentTransaction.addToBackStack(ROOT_TAG);
             fragmentTransaction.commit();
             mCurFragmentName = LeadsFragment.TAG;
             mCurFragment = mLeadsFragment;
@@ -134,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
                 mFreeLeadsFragment = FreeLeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, mFreeLeadsFragment);
-            //fragmentTransaction.addToBackStack(ROOT_TAG);
+            fragmentTransaction.addToBackStack(ROOT_TAG);
             fragmentTransaction.commit();
             mCurFragmentName = FreeLeadsFragment.TAG;
             mCurFragment = mFreeLeadsFragment;
