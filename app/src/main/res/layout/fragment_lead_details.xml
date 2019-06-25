@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="false"
-    android:padding="6dp"
     tools:context=".ui.fragments.LeadDetailsFragment">
 
     <LinearLayout
@@ -15,15 +14,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/details"
-            android:textSize="32sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:background="@color/colorAccent"
+            android:textColor="#FFF"
             android:text="@string/general"
-            android:textSize="32sp" />
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,6 +40,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,6 +65,12 @@
                 android:layout_weight="1"
                 android:textSize="14sp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->
@@ -105,6 +112,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,6 +137,12 @@
                 android:layout_weight="1"
                 android:textSize="14sp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -170,6 +189,12 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -215,12 +240,20 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:background="@color/colorAccent"
+            android:textColor="#FFF"
             android:text="@string/contact_details"
-            android:textSize="32sp" />
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -242,6 +275,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -262,6 +301,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -280,8 +325,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="14sp"
+                android:ellipsize="end"
+                android:textColor="@color/pink"
                 android:clickable="true"/>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -301,8 +354,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="14sp"
+                android:ellipsize="end"
+                android:textColor="@color/pink"
                 android:clickable="true"/>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -322,15 +383,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="14sp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/pink"
                 android:clickable="true"/>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:background="@color/colorAccent"
+            android:textColor="#FFF"
             android:text="@string/moving_from"
-            android:textSize="32sp" />
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -352,6 +424,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -371,6 +449,12 @@
                 android:layout_weight="1"
                 android:textSize="14sp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -392,6 +476,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -412,12 +502,20 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/moving_to"
-            android:textSize="32sp" />
+            android:background="@color/colorAccent"
+            android:textColor="#FFF"
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -439,6 +537,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -458,6 +562,12 @@
                 android:layout_weight="1"
                 android:textSize="14sp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -479,6 +589,12 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -498,5 +614,12 @@
                 android:layout_weight="1"
                 android:textSize="14sp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:visibility="visible"
+            android:background="@color/colorAccent"/>
+
     </LinearLayout>
 </ScrollView>

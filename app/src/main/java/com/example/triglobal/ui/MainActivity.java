@@ -90,7 +90,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void popAllBackStack() {
-        mFragmentManager.popBackStack(ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        while (mFragmentManager.getBackStackEntryCount() > 0) {
+            mFragmentManager.popBackStackImmediate();
+        }
+        mCurFragmentName = null;
+        mCurFragment = null;
     }
 
     @Override
@@ -111,8 +115,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void startLeadFragment() {
-        if (mCurFragmentName == null || !mCurFragmentName.equals(LeadsFragment.TAG)) {
+        if (mCurFragmentName != null && !mCurFragmentName.equals(LeadsFragment.TAG))
             popAllBackStack();
+        if (mCurFragmentName == null || !mCurFragmentName.equals(LeadsFragment.TAG)) {
             if (mLeadsFragment == null)
                 mLeadsFragment = LeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -137,8 +142,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startFreeLeadsFragment() {
-        if (!mCurFragmentName.equals(FreeLeadsFragment.TAG)) {
+        if (mCurFragmentName != null && !mCurFragmentName.equals(FreeLeadsFragment.TAG))
             popAllBackStack();
+        if (mCurFragmentName == null || !mCurFragmentName.equals(FreeLeadsFragment.TAG)) {
             if (mFreeLeadsFragment == null)
                 mFreeLeadsFragment = FreeLeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
