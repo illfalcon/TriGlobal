@@ -1,6 +1,7 @@
 package com.example.triglobal.ui.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
@@ -34,6 +35,7 @@ import com.example.triglobal.models.FreeLead;
 import com.example.triglobal.network.NetworkChecker;
 import com.example.triglobal.ui.BuyResponseAsyncTask;
 import com.example.triglobal.ui.FreeLeadsLoader;
+import com.example.triglobal.ui.MainActivity;
 import com.example.triglobal.ui.recycler.FreeLeadsAdapter;
 
 import java.util.ArrayList;
@@ -89,7 +91,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     private FreeLeadsAdapter.OnFreeLeadClickListener onFreeLeadClickListener;
     private FreeLeadsAdapter.OnFreeLeadPurchase onFreeLeadPurchase;
     private TextView mFreeLeadsError;
-    private TextView mFreeLeadsWaitingForNetwork;
+    //private TextView mFreeLeadsWaitingForNetwork;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean loaded;
     private OnFreeLeadFragmentInteractionListener mListener;
@@ -145,12 +147,12 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                                 }
                             } else {
                                 if (NetworkChecker.isNetworkAvailable(getContext()))
-                                    Snackbar.make(mCoordinator, "An error ocurred, sorry, please try again later", Snackbar.LENGTH_LONG)
+                                    Snackbar.make(mCoordinator, "An error occurred, please, check your internet connection and try again", Snackbar.LENGTH_LONG)
                                             .show();
                                 else {
                                     Snackbar.make(mCoordinator, "Need network to purchase a lead", Snackbar.LENGTH_LONG)
                                             .show();
-                                    mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
+                                    waitForNetwork();
                                 }
                             }
                 }).execute(freeLead.getId()))
@@ -160,7 +162,8 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         networkChangeReceiver = new NetworkChangeReceiver();
         networkChangeReceiver.onConnectionAction = () ->
         {
-            mFreeLeadsWaitingForNetwork.setVisibility(View.GONE);
+            //mFreeLeadsWaitingForNetwork.setVisibility(View.GONE);
+            endWaitingForNetwork();
             if (!loaded) {
                 Log.d(TAG, "onCreate: startLoader");
                 getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
@@ -172,8 +175,10 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 if (msg.what == FreeLeadsLoader.MSG_NO_INTERNET) {
                     Log.d(TAG, "handleMessage: NetworkChecker.isNetworkAvailable(mContext) = " +
                             NetworkChecker.isNetworkAvailable(mContext));
-                    if (!NetworkChecker.isNetworkAvailable(mContext))
-                        mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
+                    if (!NetworkChecker.isNetworkAvailable(mContext)) {
+                        waitForNetwork();
+                    }
+                        //mFreeLeadsWaitingForNetwork.setVisibility(View.VISIBLE);
                     else
                         Snackbar.make(mCoordinator, "Unable to connect to the internet, please check your network configuration", Snackbar.LENGTH_LONG)
                                 .show();
@@ -193,9 +198,9 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mFreeLeadsError = view.findViewById(R.id.freeleads_error_message);
         mCoordinator = view.findViewById(R.id.coordinator_free_leads);
-        mFreeLeadsWaitingForNetwork = view.findViewById(R.id.freeleads_no_internet_message);
-        if (savedInstanceState != null)
-            mFreeLeadsWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
+//        mFreeLeadsWaitingForNetwork = view.findViewById(R.id.freeleads_no_internet_message);
+//        if (savedInstanceState != null)
+//            mFreeLeadsWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
         return view;
     }
 
@@ -215,15 +220,30 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        loaded = false;
-        mFreeLeads = new ArrayList<>();
-        mAdapter.updateData(mFreeLeads);
-        getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+        if (NetworkChecker.isNetworkAvailable(getContext())) {
+//            loaded = false;
+//            mFreeLeads = new ArrayList<>();
+//            mAdapter.updateData(mFreeLeads);
+            getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(mCoordinator, "Need network to refresh", Snackbar.LENGTH_SHORT).show();
+            waitForNetwork();
+        }
+
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(WAITING_VISIBILITY, mFreeLeadsWaitingForNetwork.getVisibility());
+    private void waitForNetwork() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setActionBarTitle("Waiting for network...");
+        }
+    }
+
+    private void endWaitingForNetwork() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setActionBarTitle("TriGlobal");
+        }
     }
 }

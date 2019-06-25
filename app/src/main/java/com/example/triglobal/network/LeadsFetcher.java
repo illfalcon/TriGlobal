@@ -44,7 +44,7 @@ public class LeadsFetcher implements ListFetcher {
             MediaType mediaType = MediaType.parse("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
             RequestBody body = RequestBody.create(mediaType, "------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"token\"\n\nCdcZ5TqsTS\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"id\"\n\n1\n------WebKitFormBoundary7MA4YWxkTrZu0gW--");
             Request request = new Request.Builder()
-                    .url("https://public.triglobal.info/api/requests.php")
+                    .url("https://public.triglobal-test-back.nl/api/requests.php")
                     .post(body)
                     .addHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
                     .addHeader("cache-control", "no-cache")

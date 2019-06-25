@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String FRAGMENT_KEY = "curFragment";
     private static final String LEAD_KEY = "curLead";
     private static final String ROOT_TAG = "root";
+    private static final String TITLE_KEY = "title";
 
     private boolean addNewFragment;
 
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             startLeadFragment();
         }
+        if (savedInstanceState != null)
+            setActionBarTitle(savedInstanceState.getString(TITLE_KEY));
         mFragmentManager.addOnBackStackChangedListener(() -> {
             Log.i(LOG_TAG, "back stack changed ");
             Fragment fr = mFragmentManager.findFragmentById(R.id.fragment_container);
@@ -111,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private void startLeadFragment() {
         if (mCurFragmentName == null || !mCurFragmentName.equals(LeadsFragment.TAG)) {
-            //popAllBackStack();
             if (mLeadsFragment == null)
                 mLeadsFragment = LeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -168,11 +170,16 @@ public class MainActivity extends AppCompatActivity implements
         }
         outState.putString(FRAGMENT_KEY, mCurFragmentName);
         outState.putString(LEAD_KEY, leadSerialized);
+        outState.putString(TITLE_KEY, (String) getSupportActionBar().getTitle());
     }
 
     @Override
     public void onFreeLeadChoice(FreeLead freeLead) {
         mDisplayedLead = freeLead;
         startLeadDetailsFragment(freeLead);
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

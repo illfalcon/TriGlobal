@@ -13,7 +13,6 @@ import com.example.triglobal.exceptions.NoInternetException;
 import com.example.triglobal.models.Lead;
 import com.example.triglobal.network.ListFetcher;
 import com.example.triglobal.network.LeadsFetcher;
-import com.example.triglobal.network.OnNoInternetCallback;
 
 import java.util.List;
 

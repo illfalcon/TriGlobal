@@ -2,6 +2,8 @@ package com.example.triglobal.ui.fragments;
 
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +17,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.triglobal.R;
+import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.Lead;
+import com.example.triglobal.ui.MainActivity;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,6 +40,8 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
 
     private TextView mStreetTo, mZipcodeTo, mCityTo, mCountryTo;
 
+    private NetworkChangeReceiver networkChangeReceiver;
+
     public LeadDetailsFragment() {
         // Required empty public constructor
     }
@@ -53,6 +59,13 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
         bundle.putString(LEADSTRING, leadString);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        networkChangeReceiver = new NetworkChangeReceiver();
+        networkChangeReceiver.onConnectionAction = this::endWaitingForNetwork;
     }
 
     private void findViews() {
@@ -167,6 +180,33 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
                     startActivity(Intent.createChooser(dialIntent, "Call..."));
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        getActivity().registerReceiver(networkChangeReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(networkChangeReceiver);
+    }
+
+    private void waitForNetwork() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setActionBarTitle("Waiting for network...");
+        }
+    }
+
+    private void endWaitingForNetwork() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setActionBarTitle("TriGlobal");
         }
     }
 }

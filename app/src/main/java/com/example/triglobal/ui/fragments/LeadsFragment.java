@@ -31,6 +31,7 @@ import com.example.triglobal.broadcast.NetworkChangeReceiver;
 import com.example.triglobal.models.Lead;
 import com.example.triglobal.network.NetworkChecker;
 import com.example.triglobal.ui.LeadsLoader;
+import com.example.triglobal.ui.MainActivity;
 import com.example.triglobal.ui.recycler.LeadsAdapter;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     private OnLeadFragmentInteractionListener mListener;
     private TextView mLeadsError;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TextView mWaitingForNetwork;
+    //private TextView mWaitingForNetwork;
     private boolean loaded;
     private Handler mHandler;
     private Context mContext;
@@ -71,10 +72,16 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onRefresh() {
-        loaded = false;
-        mLeads = new ArrayList<>();
-        mAdapter.updateData(mLeads);
-        getLoaderManager().restartLoader(0, null, this);
+        if (NetworkChecker.isNetworkAvailable(getContext())) {
+//            loaded = false;
+//            mLeads = new ArrayList<>();
+//            mAdapter.updateData(mLeads);
+            getLoaderManager().restartLoader(0, null, this);
+        } else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(mCoordinator, "Need network to refresh", Snackbar.LENGTH_SHORT).show();
+            waitForNetwork();
+        }
     }
 
     public interface OnLeadFragmentInteractionListener {
@@ -109,11 +116,11 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         getActivity().unregisterReceiver(networkChangeReceiver);
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(WAITING_VISIBILITY, mWaitingForNetwork.getVisibility());
-    }
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putInt(WAITING_VISIBILITY, mWaitingForNetwork.getVisibility());
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,9 +134,9 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mCoordinator = view.findViewById(R.id.coordinator_leads);
-        mWaitingForNetwork = view.findViewById(R.id.leads_no_internet_message);
-        if (savedInstanceState != null)
-            mWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
+//        mWaitingForNetwork = view.findViewById(R.id.leads_no_internet_message);
+//        if (savedInstanceState != null)
+//            mWaitingForNetwork.setVisibility(savedInstanceState.getInt(WAITING_VISIBILITY));
         return view;
     }
 
@@ -171,8 +178,10 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
                 if (msg.what == LeadsLoader.MSG_NO_INTERNET) {
                     Log.d(TAG, "handleMessage: NetworkChecker.isNetworkAvailable(mContext) = " +
                             NetworkChecker.isNetworkAvailable(mContext));
-                    if (!NetworkChecker.isNetworkAvailable(mContext))
-                        mWaitingForNetwork.setVisibility(View.VISIBLE);
+                    if (!NetworkChecker.isNetworkAvailable(mContext)) {
+                        waitForNetwork();
+                    }
+//                        mWaitingForNetwork.setVisibility(View.VISIBLE);
                     else
                         Snackbar.make(mCoordinator, "Unable to connect to the internet, please check your network configuration", Snackbar.LENGTH_LONG)
                         .show();
@@ -183,9 +192,23 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         mAdapter = new LeadsAdapter(this.getContext(), mLeads, onItemClickListener);
         networkChangeReceiver = new NetworkChangeReceiver();
         networkChangeReceiver.onConnectionAction = () -> {
-            mWaitingForNetwork.setVisibility(View.GONE);
+            endWaitingForNetwork();
             if (!loaded)
                 getLoaderManager().restartLoader(0, null, this);
         };
+    }
+
+    private void waitForNetwork() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setActionBarTitle("Waiting for network...");
+        }
+    }
+
+    private void endWaitingForNetwork() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.setActionBarTitle("TriGlobal");
+        }
     }
 }
