@@ -44,12 +44,10 @@ public class MainActivity extends AppCompatActivity implements
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.navigation_free_leads:
-                        popAllBackStack();
                         startFreeLeadsFragment();
                         Log.d(LOG_TAG, "Free leads clicked");
                         return true;
                     case R.id.navigation_leads:
-                        popAllBackStack();
                         startLeadFragment();
                         Log.d(LOG_TAG, "Leads clicked");
                         return true;
@@ -114,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void startLeadFragment() {
         if (mCurFragmentName == null || !mCurFragmentName.equals(LeadsFragment.TAG)) {
+            popAllBackStack();
             if (mLeadsFragment == null)
                 mLeadsFragment = LeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
@@ -139,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public void startFreeLeadsFragment() {
         if (!mCurFragmentName.equals(FreeLeadsFragment.TAG)) {
+            popAllBackStack();
             if (mFreeLeadsFragment == null)
                 mFreeLeadsFragment = FreeLeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();

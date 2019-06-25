@@ -31,8 +31,8 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
     private static final String LEADSTRING = "leadString";
     private Lead mLead;
 
-    private TextView mMovingDate, mVolumeM3, mVolumeFt3, mContents, mAssembly, mStorage, mAddedDate;
-    private CheckBox mBusiness, mPacking;
+    private TextView mMovingDate, mVolumeM3, mVolumeFt3, mContents, mAddedDate;
+    private CheckBox mBusiness, mPacking, mAssembly, mStorage;
 
     private TextView mCompanyName, mName, mTelephone1, mTelephone2, mEmail;
 
@@ -98,8 +98,16 @@ public class LeadDetailsFragment extends Fragment implements View.OnClickListene
         mVolumeM3.setText(String.valueOf(lead.getVolumeMeters()));
         mVolumeFt3.setText(String.valueOf(lead.getVolumeFeet()));
 //        mContents.setText(lead.getContents());
-        mAssembly.setText(String.valueOf(lead.isAssembly()));
-        mStorage.setText(String.valueOf(lead.isStorage()));
+        if (mAssembly.isChecked()) {
+            mAssembly.toggle();
+        }
+        if (lead.isAssembly() == 1) {
+            mAssembly.toggle();
+        }
+        if (mStorage.isChecked())
+            mStorage.toggle();
+        if (lead.isStorage() == 1)
+            mStorage.toggle();
         if (mBusiness.isChecked()) {
             mBusiness.toggle();
         }
