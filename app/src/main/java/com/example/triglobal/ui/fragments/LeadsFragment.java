@@ -73,7 +73,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onRefresh() {
         if (NetworkChecker.isNetworkAvailable(getContext())) {
-//            loaded = false;
+            loaded = false;
 //            mLeads = new ArrayList<>();
 //            mAdapter.updateData(mLeads);
             getLoaderManager().restartLoader(0, null, this);
@@ -151,11 +151,11 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(@NonNull Loader<List<Lead>> loader, List<Lead> leads) {
         mLeadsError.setVisibility(View.GONE);
-        if (leads != null && mLeads != leads) {
+        if (leads != null) {
             Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
             mLeads = leads;
             loaded = true;
-            mAdapter.updateData(mLeads);
+            runLayoutAnimation(mRecyclerView, mLeads);
         } else {
             if (!loaded && NetworkChecker.isNetworkAvailable(getContext())) {
                 mLeadsError.setVisibility(View.VISIBLE);
@@ -210,5 +210,15 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         if (activity != null) {
             activity.setActionBarTitle("TriGlobal");
         }
+    }
+
+    private void runLayoutAnimation(final RecyclerView recyclerView, List<Lead> leads) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+
+        recyclerView.setLayoutAnimation(controller);
+        mAdapter.updateData(leads);
+        recyclerView.scheduleLayoutAnimation();
     }
 }

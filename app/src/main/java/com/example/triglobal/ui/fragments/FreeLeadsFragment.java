@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,13 +65,12 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                 @Override
                 public void onLoadFinished(@NonNull Loader<List<FreeLead>> loader, List<FreeLead> freeLeads) {
                     mFreeLeadsError.setVisibility(View.GONE);
-                    if (freeLeads != null && freeLeads != mFreeLeads) {
+                    if (freeLeads != null) {
                         Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
                                 o1.getTimeLeft().compareTo(o2.getTimeLeft()));
                         mFreeLeads = freeLeads;
-                        Log.d(TAG, "onLoadFinished: freeLeadsEmpty? " + mFreeLeads.isEmpty());
                         loaded = true;
-                        mAdapter.updateData(mFreeLeads);
+                        runLayoutAnimation(mRecyclerView, mFreeLeads);
                     } else {
                         if (!loaded && NetworkChecker.isNetworkAvailable(getContext())) {
                             mFreeLeadsError.setVisibility(View.VISIBLE);
@@ -221,7 +221,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onRefresh() {
         if (NetworkChecker.isNetworkAvailable(getContext())) {
-//            loaded = false;
+            loaded = false;
 //            mFreeLeads = new ArrayList<>();
 //            mAdapter.updateData(mFreeLeads);
             getLoaderManager().restartLoader(FREE_LEADS_LOADER_ID, null, freeLeadsLoader);
@@ -245,5 +245,15 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         if (activity != null) {
             activity.setActionBarTitle("TriGlobal");
         }
+    }
+
+    private void runLayoutAnimation(final RecyclerView recyclerView, List<FreeLead> freeLeads) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+
+        recyclerView.setLayoutAnimation(controller);
+        mAdapter.updateData(freeLeads);
+        recyclerView.scheduleLayoutAnimation();
     }
 }
