@@ -50,7 +50,7 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
 
     public static final String TAG = FreeLeadsFragment.class.getSimpleName();
     private static final int FREE_LEADS_LOADER_ID = 0;
-    private static final String WAITING_VISIBILITY = "waiting";
+    private static final String LOADED_KEY = "loaded";
 
     private LoaderManager.LoaderCallbacks<List<FreeLead>> freeLeadsLoader =
             new LoaderManager.LoaderCallbacks<List<FreeLead>>() {
@@ -69,8 +69,11 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
                         Collections.sort(freeLeads, (FreeLead o1, FreeLead o2) ->
                                 o1.getTimeLeft().compareTo(o2.getTimeLeft()));
                         mFreeLeads = freeLeads;
+                        if (!loaded)
+                            runLayoutAnimation(mRecyclerView, mFreeLeads);
+                        else
+                            mAdapter.updateData(freeLeads);
                         loaded = true;
-                        runLayoutAnimation(mRecyclerView, mFreeLeads);
                     } else {
                         if (!loaded && NetworkChecker.isNetworkAvailable(getContext())) {
                             mFreeLeadsError.setVisibility(View.VISIBLE);
@@ -128,7 +131,10 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFreeLeads = new ArrayList<>();
+        if (savedInstanceState == null)
+            mFreeLeads = new ArrayList<>();
+        else
+            loaded = savedInstanceState.getBoolean(LOADED_KEY);
         onFreeLeadClickListener = (FreeLead freeLead) -> mListener.onFreeLeadChoice(freeLead);
         onFreeLeadPurchase = (FreeLead freeLead) ->
                 new AlertDialog.Builder(getContext()).setTitle("Free Lead Purchase")
@@ -255,5 +261,11 @@ public class FreeLeadsFragment extends Fragment implements SwipeRefreshLayout.On
         recyclerView.setLayoutAnimation(controller);
         mAdapter.updateData(freeLeads);
         recyclerView.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(LOADED_KEY, loaded);
     }
 }

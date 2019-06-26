@@ -47,6 +47,7 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     public static final String TAG = LeadsFragment.class.getSimpleName();
     private static NetworkChangeReceiver networkChangeReceiver;
     private static final String WAITING_VISIBILITY = "waiting";
+    private static final String LOADED_KEY = "loaded";
 
     private RecyclerView mRecyclerView;
     private LeadsAdapter mAdapter;
@@ -154,8 +155,11 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         if (leads != null) {
             Collections.sort(leads, (Lead o1, Lead o2) -> o1.getMovingDate().compareTo(o2.getMovingDate()));
             mLeads = leads;
+            if (!loaded)
+                runLayoutAnimation(mRecyclerView, mLeads);
+            else
+                mAdapter.updateData(leads);
             loaded = true;
-            runLayoutAnimation(mRecyclerView, mLeads);
         } else {
             if (!loaded && NetworkChecker.isNetworkAvailable(getContext())) {
                 mLeadsError.setVisibility(View.VISIBLE);
@@ -171,7 +175,13 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLeads = new ArrayList<>();
+
+        Log.d(TAG, "onCreate: ");
+        if (savedInstanceState == null) {
+            mLeads = new ArrayList<>();
+        } else {
+            loaded = savedInstanceState.getBoolean(LOADED_KEY);
+        }
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -220,5 +230,11 @@ public class LeadsFragment extends Fragment implements LoaderManager.LoaderCallb
         recyclerView.setLayoutAnimation(controller);
         mAdapter.updateData(leads);
         recyclerView.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(LOADED_KEY, loaded);
     }
 }

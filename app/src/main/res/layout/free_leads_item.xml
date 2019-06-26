@@ -40,7 +40,7 @@
                 android:singleLine="true"
                 android:id="@+id/freelead_time_left"/>
             <ImageButton
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:id="@+id/freelead_downarrow"
