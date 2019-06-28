@@ -118,8 +118,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mCurFragmentName != null && !mCurFragmentName.equals(LeadsFragment.TAG))
             popAllBackStack();
         if (mCurFragmentName == null || !mCurFragmentName.equals(LeadsFragment.TAG)) {
-            if (mLeadsFragment == null)
-                mLeadsFragment = LeadsFragment.newInstance();
+            mLeadsFragment = LeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, mLeadsFragment);
             fragmentTransaction.addToBackStack(ROOT_TAG);
@@ -145,8 +144,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mCurFragmentName != null && !mCurFragmentName.equals(FreeLeadsFragment.TAG))
             popAllBackStack();
         if (mCurFragmentName == null || !mCurFragmentName.equals(FreeLeadsFragment.TAG)) {
-            if (mFreeLeadsFragment == null)
-                mFreeLeadsFragment = FreeLeadsFragment.newInstance();
+            mFreeLeadsFragment = FreeLeadsFragment.newInstance();
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, mFreeLeadsFragment);
             fragmentTransaction.addToBackStack(ROOT_TAG);
